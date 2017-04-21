@@ -19,5 +19,11 @@
 
 (defn update-project
   []
+  (println "Updating...")
   (io/rm "node_modules")
   (dorun (map #(io/download (str source-url %) %) source-files)))
+
+(defn v3->v4
+  []
+  (println "Hold on to your butts...")
+  nil)
