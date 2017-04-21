@@ -1,0 +1,9 @@
+{:cljs-version "1.9.518"
+ :builds
+ {:cdig
+  {:src "src"
+   :compiler
+   {:main 'cdig.cli
+    :target :nodejs
+    :optimizations :simple
+    :output-to "target/cdig.js"}}}}
