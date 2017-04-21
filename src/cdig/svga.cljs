@@ -9,10 +9,13 @@
 
 (defn new-project
   []
-  (println (str "Generating an SVGA"))
-  (dorun (map #(io/download (str source-url %) %) source-files))
-  (io/mkdir "/resources")
-  (io/spit-json "/cdig.json" cdig-json))
+  (if (io/path-exists? "cdig.json")
+    (println "This folder already contains an SVGA project")
+    (do
+     (println (str "Generating an SVGA"))
+     (dorun (map #(io/download (str source-url %) %) source-files))
+     (io/mkdir "resources")
+     (io/spit-json "cdig.json" cdig-json))))
 
 (defn update-project
   []

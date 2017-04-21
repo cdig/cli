@@ -12,21 +12,21 @@
   (case type
         nil (println "Please specify what sort of project you want to create: cdig new svga")
         "svga" (apply svga/new-project args)
-        (println (str "\"" type "\" is not a valid project type."))))
+        (println (str "\"" type "\" is not a valid project type"))))
 
 (defn update-project
   "Update an existing project in the current folder"
   [& args]
   (case (get-project-type)
         :svga (apply svga/update-project args)
-        (println "This doesn't appear to be a valid project folder.")))
+        (println "This doesn't appear to be a valid project folder")))
 
 (defn -main [task & args]
   (case (keyword task)
         nil (println "Please specify a command to run: cdig update")
         :new (apply new-project args)
         :update (apply update-project args)
-        (println (str "\"" task "\" is not a valid task."))))
+        (println (str "\"" task "\" is not a valid task"))))
 
 (set! *main-cli-fn* -main)
 (enable-console-print!)
