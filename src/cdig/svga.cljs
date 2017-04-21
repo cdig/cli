@@ -8,16 +8,11 @@
                 :version 4})
 
 (defn new-project
-  [project-name]
-  (cond
-    (nil? project-name) (println "Please provide a project name: cdig new svga laser-cats")
-    (io/path-exists? project-name) (println (str "There is already an SVGA named \"" project-name "\" here"))
-    :else (do
-           (println (str "Generating an SVGA named \"" project-name "\""))
-           (io/mkdir project-name)
-           (dorun (map #(io/download (str source-url %) (str project-name "/" %)) source-files))
-           (io/mkdir (str project-name "/resources"))
-           (io/spit-json (str project-name "/cdig.json") cdig-json))))
+  []
+  (println (str "Generating an SVGA"))
+  (dorun (map #(io/download (str source-url %) %) source-files))
+  (io/mkdir "/resources")
+  (io/spit-json "/cdig.json" cdig-json))
 
 (defn update-project
   []
