@@ -6,4 +6,4 @@
    {:main 'cdig.cli
     :target :nodejs
     :optimizations :simple
-    :output-to "target/cdig.js"}}}}
+    :output-to "cdig.js"}}}}
