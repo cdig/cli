@@ -2,6 +2,8 @@
   "name": "cdig-cli",
   "version": "0.0.1",
   "description": "A CLI tool for CDIG developers",
-  "bin": "target/cdig.js",
+  "bin": {
+    "cdig": "target/cdig.js"
+  },
   "license": "UNLICENSED"
 }
