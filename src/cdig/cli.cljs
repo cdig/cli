@@ -1,9 +1,10 @@
 (ns cdig.cli
   (:require
+   [clojure.string :refer [join]]
    [cdig.svga :as svga]
    [cdig.io :as io]))
 
-(defn get-project-type []
+(defn get-v4-project-type []
   (keyword (get (io/slurp-json "cdig.json") :type)))
 
 (defn get-v3-project-type []
@@ -21,7 +22,7 @@
 (defn update-project
   "Pull down the latest framework files"
   [& args]
-  (case (get-project-type)
+  (case (get-v4-project-type)
         :svga (apply svga/update-project args)
         :cd-module nil
         (println "This doesn't appear to be a v4 project folder")))
@@ -34,12 +35,28 @@
         :cd-module-project nil
         (println "This doesn't appear to be a v3 project folder")))
 
+(defn watch
+  []
+  (io/exec "yarn"))
+
+(defn setup
+  "Setup the CLI and install all dependencies"
+  []
+  (io/exec "npm i -g npm")
+  (io/exec "npm i -g yarn gulp cdig/cdig-cli"))
+
+(defn affirm
+  []
+  (dorun (map (comp println :Content) (:Subtitles (io/slurp-json "https://morbotron.com/api/random")))))
+
 (defn -main [task & args]
   (case (keyword task)
+        nil (affirm)
+        :setup (setup)
         :new (apply new-project args)
         :update (apply update-project args)
         :upgrade (apply upgrade-project args)
-        nil (println "Please specify a command to run - eg: cdig update")
+        :watch (watch)
         (println (str "\"" task "\" is not a valid task"))))
 
 (set! *main-cli-fn* -main)

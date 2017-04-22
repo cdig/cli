@@ -3,9 +3,7 @@
    [cdig.io :as io]))
 
 (def source-url "https://raw.githubusercontent.com/cdig/svga-starter/v3/dist/")
-(def source-files ["gulpfile.coffee" "package.json" "source/config.coffee" "source/symbol.coffee"])
-(def cdig-json {:type :svga
-                :version 4})
+(def source-files ["cdig.json" "gulpfile.coffee" "package.json" "source/config.coffee" "source/symbol.coffee"])
 
 (defn new-project
   []
@@ -13,15 +11,14 @@
     (println "This folder already contains an SVGA project")
     (do
      (println (str "Generating an SVGA"))
-     (dorun (map #(io/download (str source-url %) %) source-files))
-     (io/mkdir "resources")
-     (io/spit-json "cdig.json" cdig-json))))
-
+     (dorun (map #(io/curl (str source-url %) %) source-files))
+     (io/mkdir "resources"))))
+     
 (defn update-project
   []
   (println "Updating...")
   (io/rm "node_modules")
-  (dorun (map #(io/download (str source-url %) %) source-files)))
+  (dorun (map #(io/curl (str source-url %) %) source-files)))
 
 (defn v3->v4
   []
