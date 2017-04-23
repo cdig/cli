@@ -14,6 +14,8 @@
   "Upgrade brew and all relevant global npm packages"
   []
   (io/exec "brew upgrade")
+  (io/exec "brew prune")
+  (io/exec "brew cleanup")
   (io/exec "npm i -g npm")
   (io/exec "npm i -g gulp-cli cdig/cli")
   (print-affirmation))
