@@ -16,7 +16,8 @@
   []
   (io/exec "brew upgrade")
   (io/exec "npm i -g npm")
-  (io/exec "npm i -g cdig/cdig-cli"))
+  (io/exec "npm i -g cdig/cdig-cli")
+  (affirm))
 
 (defn upgrade [target & args]
   (case (keyword target)
