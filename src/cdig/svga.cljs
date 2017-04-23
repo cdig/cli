@@ -18,17 +18,9 @@
      (io/mkdir "resources")
      (pull-from-source))))
 
-(defn refresh
+(defn run
   []
   (println "Updating...")
   (io/rm "node_modules")
-  (pull-from-source))
-
-(defn work
-  []
-  (println "Working"))
-
-(defn v3->v4
-  []
-  (println "Hold on to your butts...")
-  nil)
+  (pull-from-source)
+  (io/exec "gulp"))
