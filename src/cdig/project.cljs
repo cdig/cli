@@ -18,11 +18,11 @@
         nil (println "Please specify what sort of project you want to create - eg: cdig new svga")
         (println (str "\"" type "\" is not a valid project type"))))
 
-(defn pull
+(defn refresh
   "Pull down the latest framework files"
   []
   (case (get-v4-type)
-        :svga (svga/pull)
+        :svga (svga/refresh)
         :cd-module nil
         (println "This doesn't appear to be a v4 project folder")))
 

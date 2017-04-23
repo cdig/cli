@@ -2,7 +2,7 @@
   (:require
    [cdig.io :as io]))
 
-(def source-url "https://raw.githubusercontent.com/cdig/svga-starter/v3/dist/")
+(def source-url "https://raw.githubusercontent.com/cdig/svga-starter/v4/dist/")
 (def source-files ["cdig.json" "gulpfile.coffee" "package.json" "source/config.coffee" "source/symbol.coffee"])
 
 (defn pull-from-source []
@@ -18,7 +18,7 @@
      (io/mkdir "resources")
      (pull-from-source))))
 
-(defn pull
+(defn refresh
   []
   (println "Updating...")
   (io/rm "node_modules")
