@@ -1,6 +1,5 @@
 (ns cdig.project
   (:require
-   [clojure.string :refer [join]]
    [cdig.svga :as svga]
    [cdig.io :as io]))
 

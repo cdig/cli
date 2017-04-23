@@ -3,7 +3,6 @@
    [clojure.string :refer [join]]
    [clojure.string :refer [starts-with?]]))
 
-(def colors (js/require "colors/safe"))
 (def exec-sync (.-execSync (js/require "child_process")))
 (def fs (js/require "fs"))
 (def request (js/require "sync-request"))

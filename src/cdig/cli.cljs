@@ -5,30 +5,32 @@
    [cdig.svga :as svga]
    [clojure.string :refer [join]]))
 
-(defn affirm
+(defn print-affirmation
   "Acknowledge that the CLI is working and we have an internet connection"
   []
   (dorun (map (comp println :Content)
               (:Subtitles (io/slurp-json "https://morbotron.com/api/random")))))
 
 (defn upgrade-global
-  "Upgrade all brew and yarn global packages"
+  "Upgrade brew and all relevant global npm packages"
   []
   (io/exec "brew upgrade")
   (io/exec "npm i -g npm")
-  (io/exec "npm i -g cdig/cdig-cli")
-  (affirm))
+  (io/exec "npm i -g gulp cdig/cdig-cli")
+  (print-affirmation))
 
-(defn upgrade [target & args]
+(defn upgrade
+  "Upgrade the CLI or the current project"
+  [target]
   (case (keyword target)
         nil (upgrade-global)
         :v3 (project/upgrade-v3)))
 
 (defn -main [task & args]
   (case (keyword task)
-        nil (affirm)
+        nil (print-affirmation)
         :new (apply project/new-project args)
-        :pull (apply project/pull args)
+        :refresh (apply project/refresh args)
         :upgrade (apply upgrade args)
         :work (apply project/work args)
         (println (str "\"" task "\" is not a valid task"))))
