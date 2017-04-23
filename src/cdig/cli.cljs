@@ -15,7 +15,7 @@
   []
   (io/exec "brew upgrade")
   (io/exec "npm i -g npm")
-  (io/exec "npm i -g gulp cdig/cdig-cli")
+  (io/exec "npm i -g gulp-cli cdig/cdig-cli")
   (print-affirmation))
 
 (defn new-project

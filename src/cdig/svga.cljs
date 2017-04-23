@@ -7,7 +7,7 @@
 
 (defn pull-from-source []
   (dorun (map #(io/curl (str source-url %) %) source-files))
-  (io/exec "yarn"))
+  (io/exec "yarn upgrade"))
 
 (defn new-project
   []
