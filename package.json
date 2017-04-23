@@ -6,6 +6,8 @@
     "colors": "latest",
     "sync-request": "latest"
   },
-  "bin": {"cdig": "cdig.js"},
+  "bin": {
+    "cdig": "cdig.js"
+  },
   "license": "UNLICENSED"
 }
