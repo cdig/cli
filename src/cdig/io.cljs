@@ -3,6 +3,7 @@
    [clojure.string :refer [join]]
    [clojure.string :refer [starts-with?]]))
 
+(def colors (js/require "colors/safe"))
 (def exec-sync (.-execSync (js/require "child_process")))
 (def fs (js/require "fs"))
 (def request (js/require "sync-request"))
@@ -52,3 +53,7 @@
 (defn curl [url path]
   (if-not (path-exists? path)
           (exec "curl --create-dirs -fsSo" path url)))
+
+(defn color [col text]
+  (let [f (aget colors (name col))]
+    (f text)))

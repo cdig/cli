@@ -7,7 +7,7 @@
 (defn print-affirmation
   "Acknowledge that the CLI is working and we have an internet connection"
   []
-  (dorun (map (comp println :Content)
+  (dorun (map (comp println :Content (partial io/color :green))
               (:Subtitles (io/slurp-json "https://morbotron.com/api/random")))))
 
 (defn upgrade

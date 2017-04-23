@@ -2,7 +2,10 @@
   "name": "cdig-cli",
   "version": "4.0.0",
   "description": "A CLI tool for CDIG developers",
-  "dependencies": { "sync-request": "latest" },
+  "dependencies": {
+    "colors": "latest",
+    "sync-request": "latest"
+  },
   "bin": { "cdig": "cdig.js" },
   "license": "UNLICENSED",
   "private": true
