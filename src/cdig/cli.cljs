@@ -16,8 +16,8 @@
   (io/exec "brew upgrade")
   (io/exec "brew prune")
   (io/exec "brew cleanup")
-  (io/exec "npm i -g npm")
-  (io/exec "npm i -g gulp-cli cdig/cli")
+  (io/exec "npm install npm -g")
+  (io/exec "npm update -g")
   (print-affirmation))
 
 (defn new-project
