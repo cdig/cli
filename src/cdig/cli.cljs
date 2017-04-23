@@ -24,7 +24,7 @@
   [target]
   (case (keyword target)
         nil (upgrade-global)
-        :v3 (project/upgrade-v3)))
+        :v4 (project/upgrade-v4)))
 
 (defn -main [task & args]
   (case (keyword task)

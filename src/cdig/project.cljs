@@ -34,7 +34,7 @@
         :cd-module nil
         (println "This doesn't appear to be a v4 project folder")))
 
-(defn upgrade-v3
+(defn upgrade-v4
   "Upgrade a v3 project to v4"
   []
   (case (get-v3-type)
