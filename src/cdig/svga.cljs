@@ -3,10 +3,11 @@
    [cdig.io :as io]))
 
 (def source-url "https://raw.githubusercontent.com/cdig/svga-starter/v4/dist/")
-(def source-files ["cdig.json" "gulpfile.coffee" "package.json" "source/config.coffee" "source/symbol.coffee"])
+(def build-files ["cdig.json" "gulpfile.coffee" "package.json" "source/config.coffee"])
+(def starter-files ["source/symbol.coffee"])
 
-(defn pull-from-source []
-  (dorun (map #(io/curl (str source-url %) %) source-files))
+(defn pull-files-from-source [files]
+  (dorun (map #(io/curl (str source-url %) %) files))
   (io/exec "yarn"))
 
 (defn new-project
@@ -16,11 +17,12 @@
     (do
      (println (str "Generating an SVGA"))
      (io/mkdir "resources")
-     (pull-from-source))))
+     (pull-files-from-source starter-files)
+     (pull-files-from-source build-files))))
 
 (defn run
   []
   (println "Updating...")
   (io/rm "node_modules")
-  (pull-from-source)
+  (pull-files-from-source build-files)
   (io/exec "gulp"))
