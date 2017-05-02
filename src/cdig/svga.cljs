@@ -2,13 +2,13 @@
   (:require
    [cdig.io :as io]))
 
-(def source-url "https://raw.githubusercontent.com/cdig/svga-starter/v4/dist/")
-(def build-files ["cdig.json" "gulpfile.coffee" "package.json" "source/config.coffee"])
-(def starter-files ["source/symbol.coffee"])
+(def origin-url "https://raw.githubusercontent.com/cdig/svga-starter/v4/dist/")
+(def system-files ["bower.json" "cdig.json" "gulpfile.coffee" "package.json"])
+(def source-files ["source/symbol.coffee" "source/config.coffee"])
 
-(defn pull-files-from-source [files]
-  (dorun (map #(io/curl (str source-url %) %) files))
-  (io/exec "yarn"))
+(defn pull-from-origin
+  [files]
+  (dorun (map #(io/curl (str origin-url %) %) files)))
 
 (defn new-project
   []
@@ -17,12 +17,15 @@
     (do
      (println (str "Generating an SVGA"))
      (io/mkdir "resources")
-     (pull-files-from-source starter-files)
-     (pull-files-from-source build-files))))
+     (pull-from-origin source-files)
+     (pull-from-origin system-files)
+     (io/exec "yarn")
+     (io/exec "bower install"))))
 
 (defn run
   []
   (println "Updating...")
-  (io/rm "node_modules")
-  (pull-files-from-source build-files)
+  (pull-from-origin system-files)
+  (io/exec "yarn upgrade")
+  (io/exec "bower update")
   (io/exec "gulp"))
