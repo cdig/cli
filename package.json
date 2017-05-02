@@ -4,9 +4,12 @@
   "description": "A CLI tool for CDIG developers",
   "dependencies": {
     "colors": "latest",
+    "keytar": "latest",
     "sync-request": "latest"
   },
-  "bin": { "cdig": "cdig.js" },
+  "bin": {
+    "cdig": "cdig.js"
+  },
   "license": "UNLICENSED",
   "private": true
 }

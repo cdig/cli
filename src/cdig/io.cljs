@@ -6,6 +6,7 @@
 (def colors (js/require "colors/safe"))
 (def exec-sync (.-execSync (js/require "child_process")))
 (def fs (js/require "fs"))
+(def keytar (js/require "keytar"))
 (def request (js/require "sync-request"))
 
 (defn url? [path]
@@ -57,3 +58,10 @@
 (defn color [col & texts]
   (let [f (aget colors (name col))]
     (f (apply str texts))))
+
+(defn get-password [name cb]
+  (-> (.getPassword keytar "com.lunchboxsessions.cli" name)
+      (.then cb)))
+
+(defn set-password [name password]
+  (.setPassword keytar "com.lunchboxsessions.cli" name password))
