@@ -54,6 +54,6 @@
   (if-not (path-exists? path)
           (exec "curl --create-dirs -fsSo" path url)))
 
-(defn color [col text]
+(defn color [col & texts]
   (let [f (aget colors (name col))]
-    (f text)))
+    (f (apply str texts))))

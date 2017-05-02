@@ -22,7 +22,7 @@ command-exists@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/command-exists/-/command-exists-1.2.2.tgz#12819c64faf95446ec0ae07fe6cafb6eb3708b22"
 
-concat-stream@^1.4.6, concat-stream@^1.4.7:
+concat-stream@^1.4.6, concat-stream@^1.4.7, concat-stream@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-1.6.0.tgz#0aac662fd52be78964d5532f694784e70110acf7"
   dependencies:
@@ -34,11 +34,9 @@ core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
-get-port@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/get-port/-/get-port-2.1.0.tgz#8783f9dcebd1eea495a334e1a6a251e78887ab1a"
-  dependencies:
-    pinkie-promise "^2.0.0"
+get-port@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/get-port/-/get-port-3.1.0.tgz#ef01b18a84ca6486970ff99e54446141a73ffd3e"
 
 http-basic@^2.5.1:
   version "2.5.1"
@@ -48,7 +46,7 @@ http-basic@^2.5.1:
     concat-stream "^1.4.6"
     http-response-object "^1.0.0"
 
-http-response-object@^1.0.0, http-response-object@^1.0.1, http-response-object@^1.1.0:
+http-response-object@^1.0.0, http-response-object@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/http-response-object/-/http-response-object-1.1.0.tgz#a7c4e75aae82f3bb4904e4f43f615673b4d518c3"
 
@@ -59,16 +57,6 @@ inherits@^2.0.3, inherits@~2.0.1:
 isarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
-
-pinkie-promise@^2.0.0:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/pinkie-promise/-/pinkie-promise-2.0.1.tgz#2135d6dfa7a358c069ac9b178776288228450ffa"
-  dependencies:
-    pinkie "^2.0.0"
-
-pinkie@^2.0.0:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
 
 process-nextick-args@~1.0.6:
   version "1.0.7"
@@ -103,16 +91,16 @@ string_decoder@~1.0.0:
     buffer-shims "~1.0.0"
 
 sync-request@latest:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/sync-request/-/sync-request-4.0.2.tgz#a9100ba7ec4dd2c07c703f005ee0a63494dcdc08"
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/sync-request/-/sync-request-4.0.3.tgz#307e50841611d02db19092d3dc2343ae7d78c25d"
   dependencies:
     command-exists "^1.2.2"
-    concat-stream "^1.4.7"
-    get-port "^2.1.0"
-    http-response-object "^1.0.1"
-    then-request "^2.0.1"
+    concat-stream "^1.6.0"
+    get-port "^3.1.0"
+    http-response-object "^1.1.0"
+    then-request "^2.2.0"
 
-then-request@^2.0.1:
+then-request@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/then-request/-/then-request-2.2.0.tgz#6678b32fa0ca218fe569981bbd8871b594060d81"
   dependencies:
