@@ -73,9 +73,10 @@
 (defn -main [task & args]
   (if-let [command (first (get commands (keyword task)))]
     (apply command args)
-    (if (nil? task)
-      (cmd-help)
-      (println (str "\"" task "\" is not a valid task")))))
+    (case task
+          nil (cmd-help)
+          "--version" (println (.-version (js/require "./package.json")))
+          (println (str "\"" task "\" is not a valid task")))))
 
 (def commands {:auth [cmd-auth "set your LBS API token so that we can issue secure requests"]
                :deploy [cmd-deploy "deploy the project in this folder to LBS"]

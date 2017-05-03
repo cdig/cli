@@ -8,6 +8,7 @@
 (def fs (js/require "fs"))
 (def keytar (js/require "keytar"))
 (def request (js/require "sync-request"))
+(def aws (js/require "aws-sdk"))
 
 ; Derived from https://github.com/cemerick/url/blob/master/src/cemerick/url.cljx
 (defn url-encode [string]
