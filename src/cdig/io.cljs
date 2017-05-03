@@ -9,6 +9,21 @@
 (def keytar (js/require "keytar"))
 (def request (js/require "sync-request"))
 
+; Derived from https://github.com/cemerick/url/blob/master/src/cemerick/url.cljx
+(defn url-encode [string]
+  (some-> string str (js/encodeURIComponent) (.replace "+" "%20")))
+
+; Derived from https://github.com/cemerick/url/blob/master/src/cemerick/url.cljx
+(defn map->query [m]
+  (some->> (seq m)
+           (map (fn [[k v]]
+                  [(url-encode (name k))
+                   "="
+                   (url-encode (str v))]))
+           (interpose "&")
+           flatten
+           (apply str)))
+
 (defn url? [path]
   (or (starts-with? path "http://")
       (starts-with? path "https://")))
@@ -54,6 +69,10 @@
 (defn curl [url path]
   (if-not (path-exists? path)
           (exec "curl --create-dirs -fsSo" path url)))
+
+(defn curl-post [data url]
+  (exec "curl --data" (map->query data) url)
+  (println)) ; The printout from the server doesn't have a trailing \n, which sucks, so we do this
 
 (defn color [col & texts]
   (let [f (aget colors (name col))]

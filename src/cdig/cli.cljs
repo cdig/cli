@@ -13,13 +13,21 @@
               (:Subtitles (io/slurp-json "https://morbotron.com/api/random")))))
 
 (defn cmd-auth
-  "Set the LBS deploy token for this user"
+  "Set the LBS API token for this user"
   [token]
   (if (nil? token)
-    (io/get-password "deploy-token" (partial println "Your current token is:"))
+    (io/get-password "api-token" (partial println "Your current token is:"))
     (do
-     (io/set-password "deploy-token" token)
-     (println "Your new token is:" token))))
+     (io/set-password "api-token" token)
+     (println "Your API token has been saved"))))
+
+(defn cmd-deploy
+  "Compile the project, then deploy it to LBS"
+  []
+  (io/get-password
+   "api-token"
+   (fn [token]
+     (io/curl-post {:api_token token} "http://www.lbs.dev/api/artifacts"))))
 
 (defn cmd-help
   "Display a list of available commands"
@@ -69,7 +77,8 @@
       (cmd-help)
       (println (str "\"" task "\" is not a valid task")))))
 
-(def commands {:auth [cmd-auth "set your LBS deploy token"]
+(def commands {:auth [cmd-auth "set your LBS API token so that we can issue secure requests"]
+               :deploy [cmd-deploy "deploy the project in this folder to LBS"]
                :help [cmd-help "display this helpful information"]
                :new [cmd-new "create a new project in this folder"]
                :run [cmd-run "compile and run the project in this folder"]
