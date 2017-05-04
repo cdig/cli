@@ -1,6 +1,7 @@
 (ns cdig.svga
   (:require
-   [cdig.io :as io]))
+   [cdig.io :as io]
+   [cdig.fs :as fs]))
 
 (def origin-url "https://raw.githubusercontent.com/cdig/svga-starter/v4/dist/")
 (def system-files ["bower.json" "cdig.json" "gulpfile.coffee" "package.json"])
@@ -8,15 +9,15 @@
 
 (defn pull-from-origin
   [files]
-  (dorun (map #(io/curl (str origin-url %) %) files)))
+  (dorun (map #(fs/download (str origin-url %) %) files)))
 
 (defn new-project
   []
-  (if (io/path-exists? "cdig.json")
+  (if (fs/path-exists? "cdig.json")
     (println "This folder already contains an SVGA project")
     (do
      (println (str "Generating an SVGA"))
-     (io/mkdir "resources")
+     (fs/mkdir "resources")
      (pull-from-origin source-files)
      (pull-from-origin system-files)
      (io/exec "yarn")

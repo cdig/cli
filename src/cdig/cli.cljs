@@ -1,33 +1,37 @@
 (ns cdig.cli
   (:require
+   [cdig.auth :as auth]
+   [cdig.http :as http]
    [cdig.io :as io]
-   [cdig.svga :as svga]
-   [clojure.string :refer [join]]))
+   [cdig.lbs :as lbs]
+   [cdig.s3 :as s3]
+   [cdig.svga :as svga]))
 
 (declare commands)
 
 (defn print-affirmation
   "Acknowledge that the CLI is working and we have an internet connection"
   []
-  (dorun (map (comp println (partial io/color :green "  ") :Content)
-              (:Subtitles (io/slurp-json "https://morbotron.com/api/random")))))
+  (if-let [resp (http/slurp "https://morbotron.com/api/random")]
+    (dorun (map (comp println (partial io/color :green "  ") :Content)
+                (:Subtitles (io/json->clj resp))))
+    (println (io/color :red "You are without an internet connection! How do you live?"))))
 
 (defn cmd-auth
-  "Set the LBS API token for this user"
+  "Get/set the LBS API token for this user"
   [token]
   (if (nil? token)
-    (io/get-password "api-token" (partial println "Your current token is:"))
+    (auth/get-password "api-token" (partial println "Your current token is:"))
     (do
-     (io/set-password "api-token" token)
+     (auth/set-password "api-token" token)
      (println "Your API token has been saved"))))
 
 (defn cmd-deploy
   "Compile the project, then deploy it to LBS"
   []
-  (io/get-password
-   "api-token"
-   (fn [token]
-     (io/curl-post {:api_token token} "http://www.lbs.dev/api/artifacts"))))
+  (lbs/get "http://www.lbs.dev/api/artifacts/new"
+           (fn [presigned-post-url]
+             (println presigned-post-url))))
 
 (defn cmd-help
   "Display a list of available commands"
@@ -78,7 +82,7 @@
           "--version" (println (.-version (js/require "./package.json")))
           (println (str "\"" task "\" is not a valid task")))))
 
-(def commands {:auth [cmd-auth "set your LBS API token so that we can issue secure requests"]
+(def commands {:auth [cmd-auth "get/set your LBS API token"]
                :deploy [cmd-deploy "deploy the project in this folder to LBS"]
                :help [cmd-help "display this helpful information"]
                :new [cmd-new "create a new project in this folder"]
