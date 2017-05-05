@@ -37,8 +37,9 @@
 ; PROMPT
 
 (defn prompt [question answers]
-  (loop [reply (keyword (syncprompt question))]
-    (if-let [result (get reply answers)]
-      result
-      (recur (keyword (syncprompt question))))))
-      
+  (print :yellow question)
+  (dorun (map (fn [[k v]] (println (str "Enter \"" (name k) "\" for " (name v)))) answers))
+  (loop [reply (keyword (syncprompt "Answer: "))]
+    (or (get answers reply)
+        (do (print :red "You suck!")
+            (recur (keyword (syncprompt "Better answer: ")))))))

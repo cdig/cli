@@ -9,6 +9,7 @@
    [cdig.svga :as svga])
   (:refer-clojure :exclude [update]))
 
+(declare -project-type)
 (declare commands)
 
 ; HELPERS
@@ -21,9 +22,13 @@
                 (:Subtitles (io/json->clj resp))))
     (println (io/color :red "  You are without an internet connection! How do you live?"))))
 
-(defn- project-type []
-  (or (keyword (:type (io/json->clj (fs/slurp "cdig.json"))))
-      (io/prompt "What type of project is this?" {:c :cd-module :s :svga})))
+(defn- project-type!
+  "Load or prompt for the project type. This function creates state as a side-effect, to avoid redundant loads/prompts."
+  []
+  (or -project-type
+      (def -project-type
+        (or (keyword (:type (io/json->clj (fs/slurp "cdig.json"))))
+            (io/prompt "What type of project is this?" {:c :cd-module :s :svga})))))
 
 ; COMMANDS
 
@@ -39,7 +44,7 @@
 (defn cmd-build
   "Compile the project in this folder"
   []
-  (case (project-type)
+  (case (project-type!)
         :svga (svga/build)
         :cd-module nil))
 
@@ -73,21 +78,21 @@
 (defn cmd-new
   "Populate the folder with framework files and default source/config files"
   []
-  (case (project-type)
+  (case (project-type!)
         :svga (svga/new-project)
         :cd-module nil))
 
 (defn cmd-run
   "Refresh the framework files, fire up a server, and watch for changes"
   []
-  (case (project-type)
+  (case (project-type!)
         :svga (svga/run)
         :cd-module nil))
 
 (defn cmd-update
   "Pull down system files for the project in this folder"
   []
-  (case (project-type)
+  (case (project-type!)
         :svga (svga/update)
         :cd-module nil))
 
