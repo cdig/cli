@@ -6,10 +6,20 @@
 (def origin-url "https://raw.githubusercontent.com/cdig/svga-starter/v4/dist/")
 (def system-files ["bower.json" "cdig.json" "gulpfile.coffee" "package.json"])
 (def source-files ["source/symbol.coffee" "source/config.coffee"])
+(def generated-files ["bower_components" "node_modules" "public"])
 
-(defn pull-from-origin
+(defn- pull-from-origin
   [files]
   (dorun (map #(fs/download (str origin-url %) %) files)))
+
+(defn build
+  []
+  (io/exec "gulp prod"))
+
+(defn clean
+  []
+  (dorun (map #(fs/rm (into system-files
+                            generated-files)))))
 
 (defn new-project
   []
@@ -22,10 +32,6 @@
      (pull-from-origin system-files)
      (io/exec "yarn")
      (io/exec "bower install"))))
-
-(defn build
-  []
-  (io/exec "gulp prod"))
 
 (defn run
   []

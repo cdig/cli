@@ -36,6 +36,15 @@
         nil (println "Please specify what sort of project you want to build - eg: cdig build svga")
         (println (str "\"" type "\" is not a valid project type"))))
 
+(defn cmd-clean
+  "Delete generated system files"
+  [type]
+  (case (keyword type)
+        :svga (svga/clean)
+        :cd-module nil
+        nil (println "Please specify what sort of project you want to build - eg: cdig build svga")
+        (println (str "\"" type "\" is not a valid project type"))))
+
 (defn- validate-deploy []
   (let [valid (fs/path-exists? "cdig.json")]
     (if-not valid (io/print :red "This is not a valid v4 project folder."))
@@ -106,6 +115,7 @@
 
 (def commands {:auth [cmd-auth "get/set your LBS API token"]
                :build [cmd-build "compile the project in this folder"]
+               :clean [cmd-clean "delete the public folder and all system files generated during compilation"]
                :deploy [cmd-deploy "compile the project in this folder, then deploy it to LBS"]
                :help [cmd-help "display this helpful information"]
                :new [cmd-new "create a new project in this folder"]
