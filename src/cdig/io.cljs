@@ -3,6 +3,8 @@
    [clojure.string :refer [join]])
   (:refer-clojure :exclude [print]))
 
+(def syncprompt (js/require "syncprompt"))
+
 ; EXEC
 
 (def exec-sync (.-execSync (js/require "child_process")))
@@ -31,3 +33,12 @@
 
 (defn clj->json [text]
   (js/JSON.stringify (clj->js text)))
+
+; PROMPT
+
+(defn prompt [question answers]
+  (loop [reply (keyword (syncprompt question))]
+    (if-let [result (get reply answers)]
+      result
+      (recur (keyword (syncprompt question))))))
+      

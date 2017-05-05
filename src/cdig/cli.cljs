@@ -21,18 +21,9 @@
                 (:Subtitles (io/json->clj resp))))
     (println (io/color :red "  You are without an internet connection! How do you live?"))))
 
-(defn- project-type [type]
-  (keyword (or type (:type (io/json->clj (fs/slurp "cdig.json"))))))
-
-(defn- validate-deploy []
-  (let [valid (fs/path-exists? "cdig.json")]
-    (if-not valid (io/print :red "This is not a valid v4 project folder."))
-    valid))
-
-(defn- unknown-type [type]
-  (io/print :red (if (nil? type)
-                   "Can't determine the project type. Please specify it - eg: cdig update svga"
-                   (str "\"" type "\" is not a valid project type"))))
+(defn- project-type []
+  (or (keyword (:type (io/json->clj (fs/slurp "cdig.json"))))
+      (io/prompt "What type of project is this?" {:c :cd-module :s :svga})))
 
 ; COMMANDS
 
@@ -47,11 +38,10 @@
 
 (defn cmd-build
   "Compile the project in this folder"
-  [type]
-  (case (project-type type)
+  []
+  (case (project-type)
         :svga (svga/build)
-        :cd-module nil
-        (unknown-type type)))
+        :cd-module nil))
 
 (defn cmd-clean
   "Delete system and generated files"
@@ -61,13 +51,11 @@
 
 (defn cmd-deploy
   "Compile the project, then deploy it to LBS"
-  [type]
-  (when (validate-deploy)
-    (let [project-name (fs/current-dirname)
-          project-type (project-type type)]
-      (cmd-build project-type)
-      (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" project-name) "--size-only --exclude \".*\"")
-      (io/print :green "Successfully deployed https://lbs-cdn.s3.amazonaws.com/v4/" project-name "/" project-name ".min.html"))))
+  []
+  (cmd-build)
+  (let [name (fs/current-dirname)]
+    (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" name) "--size-only --exclude \".*\"")
+    (io/print :green "Successfully deployed https://lbs-cdn.s3.amazonaws.com/v4/" name "/" name ".min.html")))
 
 (defn cmd-help
   "Display a list of available commands"
@@ -84,27 +72,24 @@
 
 (defn cmd-new
   "Populate the folder with framework files and default source/config files"
-  [type]
-  (case (project-type type)
+  []
+  (case (project-type)
         :svga (svga/new-project)
-        :cd-module nil
-        (unknown-type type)))
+        :cd-module nil))
 
 (defn cmd-run
   "Refresh the framework files, fire up a server, and watch for changes"
-  [type]
-  (case (project-type type)
+  []
+  (case (project-type)
         :svga (svga/run)
-        :cd-module nil
-        (unknown-type type)))
+        :cd-module nil))
 
 (defn cmd-update
   "Pull down system files for the project in this folder"
-  [type]
-  (case (project-type type)
+  []
+  (case (project-type)
         :svga (svga/update)
-        :cd-module nil
-        (unknown-type type)))
+        :cd-module nil))
 
 (defn cmd-upgrade
   "Upgrade brew and all relevant global npm packages"

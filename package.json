@@ -6,6 +6,7 @@
     "colors": "latest",
     "del": "latest",
     "keytar": "latest",
+    "syncprompt": "latest",
     "sync-request": "latest"
   },
   "bin": {
