@@ -60,7 +60,10 @@
   (cmd-build)
   (let [name (fs/current-dirname)]
     (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" name) "--size-only --exclude \".*\"")
-    (io/print :green "Successfully deployed https://lbs-cdn.s3.amazonaws.com/v4/" name "/" name ".min.html")))
+    (println)
+    (io/print :green "  Successfully deployed:")
+    (io/print :blue "    https://lbs-cdn.s3.amazonaws.com/v4/" name "/" name ".min.html")
+    (println)))
 
 (defn cmd-help
   "Display a list of available commands"
