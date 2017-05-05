@@ -28,8 +28,8 @@
 (defn mkdir [filepath]
   (io/exec "mkdir -p" filepath))
 
-(defn rm [filepath]
-  (del filepath))
+(defn rm [globs]
+  (.sync del (clj->js globs)))
 
 (defn spit [filepath text]
   (.writeFileSync fs filepath text))
