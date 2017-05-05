@@ -5,6 +5,7 @@
    [cdig.io :as io]
    [cdig.fs :as fs]
    [cdig.lbs :as lbs]
+   [cdig.project :as project]
    [cdig.s3 :as s3]
    [cdig.svga :as svga]))
 
@@ -17,6 +18,9 @@
     (dorun (map (comp println (partial io/color :green "  ") :Content)
                 (:Subtitles (io/json->clj resp))))
     (println (io/color :red "  You are without an internet connection! How do you live?"))))
+
+(defn- project-type []
+  (:type (io/json->clj (fs/slurp "cdig.json"))))
 
 (defn cmd-auth
   "Get/set the LBS API token for this user"
@@ -37,13 +41,9 @@
         (println (str "\"" type "\" is not a valid project type"))))
 
 (defn cmd-clean
-  "Delete generated system files"
-  [type]
-  (case (keyword type)
-        :svga (svga/clean)
-        :cd-module nil
-        nil (println "Please specify what sort of project you want to build - eg: cdig build svga")
-        (println (str "\"" type "\" is not a valid project type"))))
+  "Delete system and generated files"
+  []
+  (dorun (map fs/rm project/generated-files)))
 
 (defn- validate-deploy []
   (let [valid (fs/path-exists? "cdig.json")]
@@ -55,7 +55,7 @@
   []
   (when (validate-deploy)
     (let [project-name (fs/current-dirname)
-          project-type (:type (io/json->clj (fs/slurp "cdig.json")))]
+          project-type (project-type)]
       (cmd-build project-type)
       (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" project-name) "--size-only --exclude .*"))))
 ; (lbs/get "http://www.lbs.dev/api/artifacts/new"

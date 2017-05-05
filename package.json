@@ -5,6 +5,7 @@
   "dependencies": {
     "aws-sdk": "latest",
     "colors": "latest",
+    "del": "latest",
     "keytar": "latest",
     "sync-request": "latest"
   },

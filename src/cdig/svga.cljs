@@ -1,12 +1,11 @@
 (ns cdig.svga
   (:require
    [cdig.io :as io]
-   [cdig.fs :as fs]))
+   [cdig.fs :as fs]
+   [cdig.project :as project]))
 
 (def origin-url "https://raw.githubusercontent.com/cdig/svga-starter/v4/dist/")
-(def system-files ["bower.json" "cdig.json" "gulpfile.coffee" "package.json"])
 (def source-files ["source/symbol.coffee" "source/config.coffee"])
-(def generated-files ["bower_components" "node_modules" "public"])
 
 (defn- pull-from-origin
   [files]
@@ -16,11 +15,6 @@
   []
   (io/exec "gulp prod"))
 
-(defn clean
-  []
-  (dorun (map #(fs/rm (into system-files
-                            generated-files)))))
-
 (defn new-project
   []
   (if (fs/path-exists? "cdig.json")
@@ -29,14 +23,14 @@
      (println (str "Generating an SVGA"))
      (fs/mkdir "resources")
      (pull-from-origin source-files)
-     (pull-from-origin system-files)
+     (pull-from-origin project/system-files)
      (io/exec "yarn")
      (io/exec "bower install"))))
 
 (defn run
   []
   (println "Updating...")
-  (pull-from-origin system-files)
+  (pull-from-origin project/system-files)
   (io/exec "yarn upgrade")
   (io/exec "bower update")
   (io/exec "gulp"))
