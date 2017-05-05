@@ -99,6 +99,7 @@
   (io/exec "brew cleanup")
   (io/exec "npm install npm -g")
   (io/exec "npm update -g")
+  (io/exec "npm prune -g")
   (print-affirmation))
 
 ; MAIN
