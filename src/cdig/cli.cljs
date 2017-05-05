@@ -27,6 +27,15 @@
      (auth/set-password "api-token" token)
      (println "Your API token has been saved"))))
 
+(defn cmd-build
+  "Compile the project in this folder"
+  [type]
+  (case (keyword type)
+        :svga (svga/build)
+        :cd-module nil
+        nil (println "Please specify what sort of project you want to build - eg: cdig build svga")
+        (println (str "\"" type "\" is not a valid project type"))))
+
 (defn- validate-deploy []
   (let [valid (fs/path-exists? "cdig.json")]
     (if-not valid (io/print :red "This is not a valid v4 project folder."))
@@ -35,10 +44,11 @@
 (defn cmd-deploy
   "Compile the project, then deploy it to LBS"
   []
-  ; (when (validate-deploy)
-  (let [project-name (fs/parent-dirname ".")]
-    (println project-name)))
-; (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" name) "--size-only --exclude .*")))
+  (when (validate-deploy)
+    (let [project-name (fs/current-dirname)
+          project-type (:type (io/json->clj (fs/slurp "cdig.json")))]
+      (cmd-build project-type)
+      (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" project-name) "--size-only --exclude .*"))))
 ; (lbs/get "http://www.lbs.dev/api/artifacts/new"
 ;          (fn [presigned-post-url]
 ;            (println presigned-post-url)))))
@@ -95,10 +105,11 @@
            (cmd-help)))))
 
 (def commands {:auth [cmd-auth "get/set your LBS API token"]
-               :deploy [cmd-deploy "deploy the project in this folder to LBS"]
+               :build [cmd-build "compile the project in this folder"]
+               :deploy [cmd-deploy "compile the project in this folder, then deploy it to LBS"]
                :help [cmd-help "display this helpful information"]
                :new [cmd-new "create a new project in this folder"]
-               :run [cmd-run "compile and run the project in this folder"]
+               :run [cmd-run "compile, serve, and watch the project in this folder"]
                :upgrade [cmd-upgrade "update the cdig tool to the latest verion"]})
 
 (set! *main-cli-fn* -main)

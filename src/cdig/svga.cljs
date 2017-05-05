@@ -23,6 +23,10 @@
      (io/exec "yarn")
      (io/exec "bower install"))))
 
+(defn build
+  []
+  (io/exec "gulp prod"))
+
 (defn run
   []
   (println "Updating...")

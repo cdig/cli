@@ -12,8 +12,8 @@
 (defn basename [filepath]
   (.basename path filepath))
 
-(defn parent-dirname [filepath]
-  (last (str/split (dirname filepath) path.sep)))
+(defn current-dirname []
+  (last (str/split (.cwd js/process) path.sep)))
 
 (defn dir? [filepath]
   (.isDirectory (.lstatSync fs filepath)))
