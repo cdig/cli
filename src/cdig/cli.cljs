@@ -3,19 +3,20 @@
    [cdig.auth :as auth]
    [cdig.http :as http]
    [cdig.io :as io]
+   [cdig.fs :as fs]
    [cdig.lbs :as lbs]
    [cdig.s3 :as s3]
    [cdig.svga :as svga]))
 
 (declare commands)
 
-(defn print-affirmation
+(defn- print-affirmation
   "Acknowledge that the CLI is working and we have an internet connection"
   []
   (if-let [resp (http/slurp "https://morbotron.com/api/random")]
     (dorun (map (comp println (partial io/color :green "  ") :Content)
                 (:Subtitles (io/json->clj resp))))
-    (println (io/color :red "You are without an internet connection! How do you live?"))))
+    (println (io/color :red "  You are without an internet connection! How do you live?"))))
 
 (defn cmd-auth
   "Get/set the LBS API token for this user"
@@ -26,12 +27,21 @@
      (auth/set-password "api-token" token)
      (println "Your API token has been saved"))))
 
+(defn- validate-deploy []
+  (let [valid (fs/path-exists? "cdig.json")]
+    (if-not valid (io/print :red "This is not a valid v4 project folder."))
+    valid))
+
 (defn cmd-deploy
   "Compile the project, then deploy it to LBS"
   []
-  (lbs/get "http://www.lbs.dev/api/artifacts/new"
-           (fn [presigned-post-url]
-             (println presigned-post-url))))
+  ; (when (validate-deploy)
+  (let [project-name (fs/parent-dirname ".")]
+    (println project-name)))
+; (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" name) "--size-only --exclude .*")))
+; (lbs/get "http://www.lbs.dev/api/artifacts/new"
+;          (fn [presigned-post-url]
+;            (println presigned-post-url)))))
 
 (defn cmd-help
   "Display a list of available commands"
@@ -80,7 +90,9 @@
     (case task
           nil (cmd-help)
           "--version" (println (.-version (js/require "./package.json")))
-          (println (str "\"" task "\" is not a valid task")))))
+          (do
+           (println (io/color :red (str "\n  \"" task "\" is not a valid task")))
+           (cmd-help)))))
 
 (def commands {:auth [cmd-auth "get/set your LBS API token"]
                :deploy [cmd-deploy "deploy the project in this folder to LBS"]

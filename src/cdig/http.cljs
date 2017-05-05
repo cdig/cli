@@ -22,14 +22,21 @@
            flatten
            (apply str)))
 
-(defn get [url & headers]
-  (request "GET" url))
+(defn get
+  ([url]
+   (get url {}))
+  ([url headers]
+   (request "GET" url (clj->js {:headers headers}))))
 
 ; (defn post [url header data cb]
 ;   (exec "curl --write-out '\n' --data" (map->query data) "--header" (str \' header \') url))
 
-(defn slurp [path]
-  (try
-    (.toString (.getBody (get path)))
-    (catch :default e
-      nil)))
+(defn slurp
+  ([path]
+   (slurp path {}))
+  ([path headers]
+   (try
+     (.toString (.getBody (get path headers)))
+     (catch :default e
+       (when-let [body (.-body e)]
+         (.toString body))))))

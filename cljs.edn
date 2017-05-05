@@ -5,5 +5,5 @@
    :compiler
    {:main 'cdig.cli
     :target :nodejs
-    :optimizations :simple
+    :optimizations :none
     :output-to "cdig.js"}}}}

@@ -1,6 +1,7 @@
 (ns cdig.io
   (:require
-   [clojure.string :refer [join]]))
+   [clojure.string :refer [join]])
+  (:refer-clojure :exclude [print]))
 
 ; EXEC
 
@@ -16,6 +17,11 @@
 (defn color [col & texts]
   (let [f (aget colors (name col))]
     (f (apply str texts))))
+
+; PRINTING
+
+(defn print [c & texts]
+  (println (apply color c texts)))
 
 ; JSON
 

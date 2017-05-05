@@ -1,34 +1,45 @@
 (ns cdig.fs
   (:require
-   [cdig.io :as io]))
+   [cdig.io :as io]
+   [clojure.string :as str]))
 
 (def fs (js/require "fs"))
+(def path (js/require "path"))
 
-(defn dir? [path]
-  (.isDirectory (.lstatSync fs path)))
+(defn dirname [filepath]
+  (.dirname path filepath))
 
-(defn path-exists? [path]
-  (.existsSync fs path))
+(defn basename [filepath]
+  (.basename path filepath))
 
-(defn touch [path]
-  (io/exec "touch" path))
+(defn parent-dirname [filepath]
+  (last (str/split (dirname filepath) path.sep)))
 
-(defn mkdir [path]
-  (io/exec "mkdir -p" path))
+(defn dir? [filepath]
+  (.isDirectory (.lstatSync fs filepath)))
 
-(defn rm [path]
+(defn path-exists? [filepath]
+  (.existsSync fs filepath))
+
+(defn touch [filepath]
+  (io/exec "touch" filepath))
+
+(defn mkdir [filepath]
+  (io/exec "mkdir -p" filepath))
+
+(defn rm [filepath]
   (try
-    (if (dir? path)
-      (.rmdirSync fs path)
-      (.unlinkSync fs path))
+    (if (dir? filepath)
+      (.rmdirSync fs filepath)
+      (.unlinkSync fs filepath))
     (catch js/Error e nil)))
 
-(defn spit [path text]
-  (.writeFileSync fs path text))
+(defn spit [filepath text]
+  (.writeFileSync fs filepath text))
 
-(defn slurp [path]
-  (.toString (.readFileSync fs path)))
+(defn slurp [filepath]
+  (.toString (.readFileSync fs filepath)))
 
-(defn download [url path]
-  (if-not (path-exists? path)
-          (io/exec "curl --create-dirs -fsSo" path url)))
+(defn download [url filepath]
+  (if-not (path-exists? filepath)
+          (io/exec "curl --create-dirs -fsSo" filepath url)))
