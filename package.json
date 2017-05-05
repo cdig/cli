@@ -2,7 +2,7 @@
   "name": "cdig-cli",
   "version": "4.0.0",
   "description": "A CLI tool for CDIG developers",
-  "devDependencies": {
+  "dependencies": {
     "colors": "latest",
     "del": "latest",
     "keytar": "latest",
