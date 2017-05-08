@@ -1,6 +1,7 @@
 (ns cdig.cli
   (:require
    [cdig.auth :as auth]
+   [cdig.cd-module :as cd-module]
    [cdig.http :as http]
    [cdig.io :as io]
    [cdig.fs :as fs]
@@ -10,6 +11,7 @@
   (:refer-clojure :exclude [update]))
 
 (declare -project-type)
+(declare cmd-sync)
 (declare commands)
 
 ; HELPERS
@@ -28,7 +30,7 @@
   (or -project-type
       (def -project-type
         (or (keyword (:type (io/json->clj (fs/slurp "cdig.json"))))
-            (io/prompt "What type of project is this?" {:c :cd-module :s :svga})))))
+            (io/prompt "What type of project is this?" {:m :cd-module :s :svga})))))
 
 ; COMMANDS
 
@@ -46,7 +48,7 @@
   []
   (case (project-type!)
         :svga (svga/build)
-        :cd-module nil))
+        :cd-module (cd-module/build)))
 
 (defn cmd-clean
   "Delete system and generated files"
@@ -55,15 +57,10 @@
   (fs/rm project/system-files))
 
 (defn cmd-deploy
-  "Compile the project, then deploy it to LBS"
+  "Build and sync"
   []
   (cmd-build)
-  (let [name (fs/current-dirname)]
-    (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" name) "--size-only --exclude \".*\"")
-    (println)
-    (io/print :green "  Successfully deployed:")
-    (io/print :blue "    https://lbs-cdn.s3.amazonaws.com/v4/" name "/" name ".min.html")
-    (println)))
+  (cmd-sync))
 
 (defn cmd-help
   "Display a list of available commands"
@@ -83,21 +80,31 @@
   []
   (case (project-type!)
         :svga (svga/new-project)
-        :cd-module nil))
+        :cd-module (cd-module/new-project)))
 
 (defn cmd-run
   "Refresh the framework files, fire up a server, and watch for changes"
   []
   (case (project-type!)
         :svga (svga/run)
-        :cd-module nil))
+        :cd-module (cd-module/run)))
+
+(defn cmd-sync
+  "Sync the public folder up to S3"
+  []
+  (let [name (fs/current-dirname)]
+    (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" name) "--size-only --exclude \".*\" --cache-control max-age=86400,immutable")
+    (println)
+    (io/print :green "  Successfully deployed:")
+    (io/print :blue "    https://lbs-cdn.s3.amazonaws.com/v4/" name "/" name ".min.html")
+    (println)))
 
 (defn cmd-update
   "Pull down system files for the project in this folder"
   []
   (case (project-type!)
         :svga (svga/update)
-        :cd-module nil))
+        :cd-module (cd-module/update)))
 
 (defn cmd-upgrade
   "Upgrade brew and all relevant global npm packages"
@@ -125,12 +132,13 @@
 (def commands {:auth [cmd-auth "get/set your LBS API token"]
                :build [cmd-build "update and compile the project in this folder"]
                :clean [cmd-clean "delete the public folder and all system files generated during compilation"]
-               :deploy [cmd-deploy "update and compile the project in this folder, then deploy it to LBS"]
+               :deploy [cmd-deploy "build, then sync"]
                :help [cmd-help "display this helpful information"]
                :new [cmd-new "create a new project in this folder"]
                :run [cmd-run "update, build, serve, and watch the project in this folder"]
+               :sync [cmd-sync "push new or changed items in the public folder to S3"]
                :update [cmd-update "update the system files for the project in this folder"]
-               :upgrade [cmd-upgrade "update the cdig tool to the latest verion"]})
+               :upgrade [cmd-upgrade "upgrade the cdig tool to the latest verion"]})
 
 (set! *main-cli-fn* -main)
 (enable-console-print!)
