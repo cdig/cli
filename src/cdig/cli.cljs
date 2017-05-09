@@ -61,25 +61,33 @@
   (io/exec "npm prune -g")
   (print-affirmation))
 
-
 ; COMMANDS: PROJECT
 
 (defn cmd-clean []
+  (io/print :yellow "Flushing the trash off...")
   (project/clean))
 
 (defn cmd-compile []
+  (io/print :yellow "Compiling deployable build...")
   (project/compile))
 
 (defn cmd-new []
-  (project/new-project (project-type!)))
+  (if (fs/path-exists? "source")
+    (io/print :red "This folder already contains a project")
+    (let [type (project-type!)]
+      (io/print :yellow (str "Creating a new " (name type) " project..."))
+      (project/new-project type))))
 
 (defn cmd-pull []
+  (io/print :yellow "Pulling fresh system files...")
   (project/pull (project-type!)))
 
 (defn cmd-push []
+  (io/print :yellow "Pushing to S3...")
   (project/push))
 
 (defn cmd-watch []
+  (io/print :yellow "Running development process... (press control-c to stop)")
   (project/watch))
 
 ; COMMANDS: SHORTCUTS
