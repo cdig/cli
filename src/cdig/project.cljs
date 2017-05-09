@@ -19,7 +19,8 @@
   (io/print :yellow "Pulling fresh system files from origin...")
   (clear-and-pull-from-origin type system-files)
   (io/exec "yarn")
-  (io/exec "bower update"))
+  (io/exec "bower update")
+  (io/exec "bower prune"))
 
 (defn new-project [type source-files]
   (if (fs/path-exists? "source")
