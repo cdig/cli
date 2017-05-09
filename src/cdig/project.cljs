@@ -32,7 +32,7 @@
   (pull-from-origin type system-files)
   (io/exec "yarn")
   (io/exec "bower prune")
-  (io/exec "bower install"))
+  (io/exec "bower update"))
 
 (defn push []
   (let [name (fs/current-dirname)]
