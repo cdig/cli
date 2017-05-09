@@ -38,6 +38,7 @@
   (io/exec "bower prune"))
 
 (defn push []
+  (io/print :yellow "Pushing to S3...")
   (let [name (fs/current-dirname)]
     (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" name) "--size-only --exclude \".*\" --cache-control max-age=86400,immutable")
     (println)
