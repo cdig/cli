@@ -54,5 +54,5 @@
   (io/exec "gulp prod"))
 
 (defn watch []
-  (io/print :yellow "Running development process...")
+  (io/print :yellow "Running development process... (press control-c to stop)")
   (io/exec "gulp"))
