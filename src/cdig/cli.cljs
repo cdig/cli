@@ -1,17 +1,12 @@
 (ns cdig.cli
   (:require
    [cdig.auth :as auth]
-   [cdig.cd-module :as cd-module]
    [cdig.http :as http]
    [cdig.io :as io]
    [cdig.fs :as fs]
-   [cdig.lbs :as lbs]
-   [cdig.project :as project]
-   [cdig.svga :as svga])
-  (:refer-clojure :exclude [update]))
+   [cdig.project :as project]))
 
-(declare -project-type)
-(declare cmd-sync)
+(declare !project-type)
 (declare commands)
 
 ; HELPERS
@@ -25,14 +20,14 @@
     (println (io/color :red "  You are without an internet connection! How do you live?"))))
 
 (defn- project-type!
-  "Load or prompt for the project type. This function creates state as a side-effect, to avoid redundant loads/prompts."
+  "Get or prompt for the project type. This function is stateful to avoid redundant prompts."
   []
-  (or -project-type
-      (def -project-type
+  (or !project-type
+      (def !project-type
         (or (keyword (:type (io/json->clj (fs/slurp "cdig.json"))))
             (io/prompt "What type of project is this?" {:m :cd-module :s :svga})))))
 
-; COMMANDS
+; COMMANDS: TOOL
 
 (defn cmd-auth
   "Get/set the LBS API token for this user"
@@ -41,70 +36,19 @@
     (auth/get-password "api-token" (partial println "Your current token is:"))
     (do
      (auth/set-password "api-token" token)
-     (println "Your API token has been saved"))))
-
-(defn cmd-build
-  "Compile the project in this folder"
-  []
-  (case (project-type!)
-        :svga (svga/build)
-        :cd-module (cd-module/build)))
-
-(defn cmd-clean
-  "Delete system and generated files"
-  []
-  (fs/rm project/generated-files)
-  (fs/rm project/system-files))
-
-(defn cmd-deploy
-  "Build and sync"
-  []
-  (cmd-build)
-  (cmd-sync))
+     (io/print :green "Your API token has been saved"))))
 
 (defn cmd-help
   "Display a list of available commands"
   []
   (println "\n  Usage: cdig [command]")
   (println "\n  Commands:")
-  (dorun (map #(println "   "
-                        (name (first %))
-                        (io/color :blue "- " (second (second %))))
-              commands))
+  (dorun (map (fn [[key [_ description]]]
+                (println "   " (name key) (io/color :blue "  " description)))
+              (sort commands)))
   (println)
   (print-affirmation)
   (println))
-
-(defn cmd-new
-  "Populate the folder with framework files and default source/config files"
-  []
-  (case (project-type!)
-        :svga (svga/new-project)
-        :cd-module (cd-module/new-project)))
-
-(defn cmd-run
-  "Refresh the framework files, fire up a server, and watch for changes"
-  []
-  (case (project-type!)
-        :svga (svga/run)
-        :cd-module (cd-module/run)))
-
-(defn cmd-sync
-  "Sync the public folder up to S3"
-  []
-  (let [name (fs/current-dirname)]
-    (io/exec "aws s3 sync public" (str "s3://lbs-cdn/v4/" name) "--size-only --exclude \".*\" --cache-control max-age=86400,immutable")
-    (println)
-    (io/print :green "  Successfully deployed:")
-    (io/print :blue "    https://lbs-cdn.s3.amazonaws.com/v4/" name "/" name ".min.html")
-    (println)))
-
-(defn cmd-update
-  "Pull down system files for the project in this folder"
-  []
-  (case (project-type!)
-        :svga (svga/update)
-        :cd-module (cd-module/update)))
 
 (defn cmd-upgrade
   "Upgrade brew and all relevant global npm packages"
@@ -116,6 +60,38 @@
   (io/exec "npm update -g")
   (io/exec "npm prune -g")
   (print-affirmation))
+
+
+; COMMANDS: PROJECT
+
+(defn cmd-clean []
+  (project/clean))
+
+(defn cmd-compile []
+  (project/compile))
+
+(defn cmd-new []
+  (project/new-project (project-type!)))
+
+(defn cmd-pull []
+  (project/pull (project-type!)))
+
+(defn cmd-push []
+  (project/push))
+
+(defn cmd-watch []
+  (project/watch))
+
+; COMMANDS: SHORTCUTS
+
+(defn cmd-deploy []
+  (cmd-pull)
+  (cmd-compile)
+  (cmd-push))
+
+(defn cmd-run []
+  (cmd-pull)
+  (cmd-watch))
 
 ; MAIN
 
@@ -129,16 +105,23 @@
            (println (io/color :red (str "\n  \"" task "\" is not a valid task")))
            (cmd-help)))))
 
-(def commands {:auth [cmd-auth "get/set your LBS API token"]
-               :build [cmd-build "update and compile the project in this folder"]
-               :clean [cmd-clean "delete the public folder and all system files generated during compilation"]
-               :deploy [cmd-deploy "build, then sync"]
-               :help [cmd-help "display this helpful information"]
-               :new [cmd-new "create a new project in this folder"]
-               :run [cmd-run "update, build, serve, and watch the project in this folder"]
-               :sync [cmd-sync "push new or changed items in the public folder to S3"]
-               :update [cmd-update "update the system files for the project in this folder"]
-               :upgrade [cmd-upgrade "upgrade the cdig tool to the latest verion"]})
+(def commands {
+               ; Tool
+               :auth [cmd-auth "   Get/set your LBS API token"]
+               :help [cmd-help "   Display this helpful information"]
+               :upgrade [cmd-upgrade "Upgrade all command line utilities"]
+               
+               ; Project
+               :clean [cmd-clean "  Delete the public folder and all system files generated during compilation"]
+               :compile [cmd-compile "Make a deployable build of the project in this folder"]
+               :new [cmd-new "    Create a new project in this folder"]
+               :pull [cmd-pull "   Download fresh system files for the project in this folder"]
+               :push [cmd-push "   Upload items from the public folder to S3 (NB: the current folder name is used as the project slug)"]
+               :watch [cmd-watch "  Continually make & serve a development build of the project in this folder"]
+               
+               ; Shortcuts
+               :deploy [cmd-deploy " Shortcut: pull + compile + push"]
+               :run [cmd-run "    Shortcut: pull + watch"]})
 
 (set! *main-cli-fn* -main)
 (enable-console-print!)
