@@ -1,7 +1,7 @@
 (ns cdig.project
   (:require
-   [cdig.io :as io]
-   [cdig.fs :as fs]))
+   [cdig.fs :as fs]
+   [cdig.io :as io]))
 
 (declare pull)
 
@@ -13,6 +13,13 @@
 (defn- pull-from-origin [type files]
   (let [base-url (str "https://raw.githubusercontent.com/cdig/" (name type) "-starter/v4/dist/")]
     (dorun (map #(fs/download (str base-url %) %) files))))
+
+(defn project-name []
+  (fs/current-dirname))
+
+(defn index-name []
+  (if (fs/dir? ".deploy")
+    (fs/basename (first (fs/readdir ".deploy")))))
 
 (defn clean []
   (fs/rm generated-files)
@@ -35,16 +42,14 @@
   (io/exec "bower update"))
 
 (defn push []
-  (if (and (fs/dir? "deploy") (fs/dir? ".deploy"))
-    (let [project-name (fs/current-dirname)
-          index-name (fs/basename (first (fs/readdir ".deploy")))]
-      (io/exec "aws s3 sync deploy s3://lbs-cdn/v4/ --size-only --exclude \".*\" --cache-control max-age=86400,immutable")
-      (println)
-      (io/print :green "  Successfully pushed:")
-      (io/print :blue "    https://lbs-cdn.s3.amazonaws.com/v4/" project-name "/" index-name)
-      (println))
-    (io/print :red "No deploy folder - please do a production build first, or run: cdig deploy")))
-
+  (io/print :yellow "Pushing to S3...")
+  (let [project (project-name)
+        index (index-name)]
+    (io/exec "aws s3 sync deploy s3://lbs-cdn/v4/ --size-only --exclude \".*\" --cache-control max-age=86400,immutable")
+    (println)
+    (io/print :green "  Successfully pushed:")
+    (io/print :blue "    v4/" project "/" index)
+    (println)))
 
 (defn watch []
   (io/exec "gulp"))

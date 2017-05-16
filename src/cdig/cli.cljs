@@ -4,6 +4,7 @@
    [cdig.http :as http]
    [cdig.io :as io]
    [cdig.fs :as fs]
+   [cdig.lbs :as lbs]
    [cdig.project :as project]))
 
 (declare !project-type)
@@ -83,11 +84,14 @@
   (project/pull (project-type!)))
 
 (defn cmd-push []
-  (io/print :yellow "Pushing to S3...")
-  (project/push))
+  (if (and (project/project-name) (project/index-name))
+    (project/push)
+    (io/print :red "No deploy folder - please do a production build first, or run: cdig deploy")))
 
 (defn cmd-register []
-  (io/print :yellow "Doh! Register is not yet implemented."))
+  (if (and (project/project-name) (project/index-name))
+    (lbs/register (partial io/print :green))
+    (io/print :red "No deploy folder - please do a production build first, or run: cdig deploy")))
 
 (defn cmd-watch []
   (io/print :yellow "Running development process... (press control-c to stop)")
@@ -98,7 +102,8 @@
 (defn cmd-deploy []
   (cmd-pull)
   (cmd-compile)
-  (cmd-push))
+  (cmd-push)
+  (cmd-register))
 
 (defn cmd-run []
   (cmd-pull)

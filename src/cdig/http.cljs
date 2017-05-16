@@ -23,20 +23,26 @@
            (apply str)))
 
 (defn get
-  ([url]
-   (get url {}))
-  ([url headers]
-   (request "GET" url (clj->js {:headers headers}))))
+  ([url] (get url {}))
+  ([url headers] (request "GET" url (clj->js {:headers headers}))))
 
-; (defn post [url header data cb]
-;   (exec "curl --write-out '\n' --data" (map->query data) "--header" (str \' header \') url))
+(defn post
+  ([url data] (post url data {}))
+  ([url data headers] (request "POST" url (clj->js {:json data :headers headers}))))
+
+(defn submit [f & args]
+  (.toString
+   (try
+     (.getBody (apply f args) "utf8")
+     (catch :default e
+       (if-let [body (.-body e)]
+         body
+         e)))))
 
 (defn slurp
-  ([path]
-   (slurp path {}))
-  ([path headers]
-   (try
-     (.toString (.getBody (get path headers)))
-     (catch :default e
-       (when-let [body (.-body e)]
-         (.toString body))))))
+  ([url] (slurp url {}))
+  ([url headers] (submit get url headers)))
+
+(defn spit
+  ([url data] (spit url data {}))
+  ([url data headers] (submit post url data headers)))
