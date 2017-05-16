@@ -7,6 +7,9 @@
 (def fs (js/require "fs"))
 (def path (js/require "path"))
 
+(defn readdir [filepath]
+  (.readdirSync filepath))
+
 (defn dirname [filepath]
   (.dirname path filepath))
 

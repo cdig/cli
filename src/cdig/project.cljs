@@ -35,12 +35,16 @@
   (io/exec "bower update"))
 
 (defn push []
-  (let [name (fs/current-dirname)]
-    (io/exec "aws s3 sync deploy" (str "s3://lbs-cdn/v4/" name) "--size-only --exclude \".*\" --cache-control max-age=86400,immutable")
-    (println)
-    (io/print :green "  Successfully deployed:")
-    (io/print :blue "    https://lbs-cdn.s3.amazonaws.com/v4/" name "/" name ".min.html")
-    (println)))
+  (if (and (fs/dir? "deploy") (fs/dir? "_deploy"))
+    (let [project-name (fs/current-dirname)
+          index-name (fs/basename (first (fs/readdir "_deploy")))]
+      (io/exec "aws s3 sync deploy s3://lbs-cdn/v4/ --size-only --exclude \".*\" --cache-control max-age=86400,immutable")
+      (println)
+      (io/print :green "  Successfully pushed:")
+      (io/print :blue "    https://lbs-cdn.s3.amazonaws.com/v4/" project-name "/" index-name)
+      (println))
+    (io/print :red "No deploy folder - please do a production build first, or run: cdig deploy")))
+
 
 (defn watch []
   (io/exec "gulp"))
