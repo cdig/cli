@@ -35,9 +35,9 @@
   (io/exec "bower update"))
 
 (defn push []
-  (if (and (fs/dir? "deploy") (fs/dir? "_deploy"))
+  (if (and (fs/dir? "deploy") (fs/dir? ".deploy"))
     (let [project-name (fs/current-dirname)
-          index-name (fs/basename (first (fs/readdir "_deploy")))]
+          index-name (fs/basename (first (fs/readdir ".deploy")))]
       (io/exec "aws s3 sync deploy s3://lbs-cdn/v4/ --size-only --exclude \".*\" --cache-control max-age=86400,immutable")
       (println)
       (io/print :green "  Successfully pushed:")
