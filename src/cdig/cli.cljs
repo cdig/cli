@@ -86,6 +86,9 @@
   (io/print :yellow "Pushing to S3...")
   (project/push))
 
+(defn cmd-register []
+  (io/print :yellow "Doh! Register is not yet implemented."))
+
 (defn cmd-watch []
   (io/print :yellow "Running development process... (press control-c to stop)")
   (project/watch))
@@ -115,21 +118,22 @@
 
 (def commands {
                ; Tool
-               :auth [cmd-auth "   Get/set your LBS API token"]
-               :help [cmd-help "   Display this helpful information"]
-               :upgrade [cmd-upgrade "Upgrade all command line utilities"]
+               :auth [cmd-auth "    Get/set your LBS API token"]
+               :help [cmd-help "    Display this helpful information"]
+               :upgrade [cmd-upgrade " Upgrade all command line utilities"]
                
                ; Project
-               :clean [cmd-clean "  Delete the public folder and all system files generated during compilation"]
-               :compile [cmd-compile "Make a deployable build of the project in this folder"]
-               :new [cmd-new "    Create a new project in this folder"]
-               :pull [cmd-pull "   Download fresh system files for the project in this folder"]
-               :push [cmd-push "   Upload items from the public folder to S3 (NB: the current folder name is used as the project slug)"]
-               :watch [cmd-watch "  Continually make & serve a development build of the project in this folder"]
+               :clean [cmd-clean "   Delete all the auto-generated stuff in this folder"]
+               :compile [cmd-compile " Make a deployable build of the project in this folder"]
+               :new [cmd-new "     Create a new project in this folder"]
+               :pull [cmd-pull "    Download fresh system files for the project in this folder"]
+               :push [cmd-push "    Upload items from the deploy folder to S3"]
+               :register [cmd-register "Tell LBS about the project in this folder"]
+               :watch [cmd-watch "   Continually make & serve a development build of the project in this folder"]
                
                ; Shortcuts
-               :deploy [cmd-deploy " Shortcut: pull + compile + push"]
-               :run [cmd-run "    Shortcut: pull + watch"]})
+               :deploy [cmd-deploy "  Shortcut: pull + compile + push + register"]
+               :run [cmd-run "     Shortcut: pull + watch"]})
 
 (set! *main-cli-fn* -main)
 (enable-console-print!)
