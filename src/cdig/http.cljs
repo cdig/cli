@@ -31,13 +31,11 @@
   ([url data headers] (request "POST" url (clj->js {:json data :headers headers}))))
 
 (defn submit [f & args]
-  (.toString
-   (try
-     (.getBody (apply f args) "utf8")
-     (catch :default e
-       (if-let [body (.-body e)]
-         body
-         e)))))
+  (try
+    (.toString (.getBody (apply f args) "utf8"))
+    (catch :default e
+      (if-let [body (.-body e)]
+        (.toString body)))))
 
 (defn slurp
   ([url] (slurp url {}))

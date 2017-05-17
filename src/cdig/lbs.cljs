@@ -7,6 +7,9 @@
   (:refer-clojure :exclude [get]))
 
 (def auth-header "X-LBS-API-TOKEN")
+(def lbs-prod-domain "https://www.lunchboxsessions.com")
+(def lbs-dev-domain "http://www.lbs.dev")
+(def lbs-domain lbs-prod-domain)
 
 (defn get [url cb]
   (auth/get-password
@@ -22,7 +25,7 @@
 
 (defn register [cb]
   (io/print :yellow "Registering with LBS...")
-  (let [project (str (project/project-name))
-        index (project/index-name)
-        source (str "v4/" project "/" index)]
-    (post "https://www.lunchboxsessions.com/api/artifacts/new" {:name project :source source} cb)))
+  (let [era "v4"
+        project (str (project/project-name))
+        index (project/index-name)]
+    (post (str lbs-domain "/api/artifacts/new") {:era era :name project :source index} cb)))
