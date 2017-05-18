@@ -24,7 +24,6 @@
      (cb (http/spit url data {auth-header token})))))
 
 (defn register [cb]
-  (io/print :yellow "Registering with LBS...")
   (let [era "v4"
         project (str (project/project-name))
         index (project/index-name)]

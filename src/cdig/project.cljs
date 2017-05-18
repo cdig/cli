@@ -42,16 +42,11 @@
   (io/exec "bower update"))
 
 (defn push []
-  (io/print :yellow "Pushing to S3...")
-  (let [era "v4"
-        project (project-name)
+  (let [project (project-name)
         index (index-name)
-        s3-path (str "s3://lbs-cdn/" era "/" project)]
-    (io/exec "aws s3 sync deploy" s3-path "--size-only --exclude \".*\" --cache-control max-age=86400,immutable")
-    (println)
-    (io/print :green "  Successfully pushed:")
-    (io/print :blue "    " era "/" project "/" index)
-    (println)))
+        era "v4"
+        s3-path (str "s3://lbs-cdn/" era "/")]
+    (io/exec "aws s3 sync deploy" s3-path "--size-only --exclude \".*\" --cache-control max-age=31536000,immutable")))
 
 (defn watch []
   (io/exec "gulp"))

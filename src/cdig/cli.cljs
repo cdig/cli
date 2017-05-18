@@ -28,6 +28,9 @@
         (or (keyword (:type (io/json->clj (fs/slurp "cdig.json"))))
             (io/prompt "What type of project is this?" {:m :cd-module :s :svga})))))
 
+(defn- is-deployable []
+  (and (project/project-name) (project/index-name)))
+
 ; COMMANDS: TOOL
 
 (defn cmd-auth
@@ -84,12 +87,14 @@
   (project/pull (project-type!)))
 
 (defn cmd-push []
-  (if (and (project/project-name) (project/index-name))
+  (io/print :yellow "Pushing to S3...")
+  (if (is-deployable)
     (project/push)
     (io/print :red "No deploy folder - please do a production build first, or run: cdig deploy")))
 
 (defn cmd-register []
-  (if (and (project/project-name) (project/index-name))
+  (io/print :yellow "Registering with LBS...")
+  (if (is-deployable)
     (lbs/register (partial io/print :green))
     (io/print :red "No deploy folder - please do a production build first, or run: cdig deploy")))
 
