@@ -37,7 +37,9 @@
 (defn pull [type]
   (fs/rm system-files)
   (pull-from-origin type system-files)
-  (io/exec "yarn upgrade"))
+  (if (fs/path-exists? "yarn.lock")
+   (io/exec "yarn upgrade")
+   (io/exec "yarn install")))
 
 (defn push []
   (let [project (project-name)
