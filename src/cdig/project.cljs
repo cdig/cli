@@ -5,8 +5,8 @@
 
 (declare pull)
 
-(def system-files [".gitignore" "bower.json" "cdig.json" "gulpfile.coffee" "package.json"])
-(def generated-files [".deploy" ".DS_Store" ".git" "bower_components" "deploy" "node_modules" "public" "yarn.lock"])
+(def system-files [".gitignore" "cdig.json" "gulpfile.coffee" "package.json"])
+(def generated-files [".DS_Store" ".git" "bower.json" "bower_components" "deploy" "node_modules" "public" "yarn.lock"])
 (def new-project-files {:cd-module ["source/index.kit" "source/pages/ending.kit" "source/pages/title.kit" "source/styles/fonts.scss"]
                         :svga ["source/symbol.coffee" "source/config.coffee"]})
 
@@ -18,8 +18,8 @@
   (fs/current-dirname))
 
 (defn index-name []
-  (if (fs/dir? ".deploy")
-    (fs/basename (first (fs/readdir ".deploy")))))
+  (if (fs/dir? "deploy")
+    (fs/basename (first (fs/readdir "deploy/index")))))
 
 (defn clean []
   (fs/rm generated-files)
@@ -46,7 +46,7 @@
         index (index-name)
         era "v4"
         s3-path (str "s3://lbs-cdn/" era "/")]
-    (io/exec "aws s3 sync deploy" s3-path "--size-only --exclude \".*\" --cache-control max-age=31536000,immutable")))
+    (io/exec "aws s3 sync deploy/all" s3-path "--size-only --exclude \".*\" --cache-control max-age=31536000,immutable")))
 
 (defn watch []
   (io/exec "gulp"))
