@@ -37,9 +37,7 @@
 (defn pull [type]
   (fs/rm system-files)
   (pull-from-origin type system-files)
-  (io/exec "yarn")
-  (io/exec "bower prune")
-  (io/exec "bower update"))
+  (io/exec "yarn upgrade"))
 
 (defn push []
   (let [project (project-name)
