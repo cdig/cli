@@ -95,7 +95,7 @@
 (defn cmd-register []
   (io/print :yellow "Registering with LBS...")
   (if (is-deployable)
-    (lbs/register (partial io/print :green))
+    (lbs/register)
     (io/print :red "No deploy folder - please do a production build first, or run: cdig deploy")))
 
 (defn cmd-watch []
