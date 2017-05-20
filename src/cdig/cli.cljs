@@ -26,7 +26,10 @@
   (or !project-type
       (def !project-type
         (or (keyword (:type (io/json->clj (fs/slurp "cdig.json"))))
-            (io/prompt "What type of project is this?" {:m :cd-module :s :svga})))))
+            (if (fs/path-exists? "source/config.coffee")
+              :svga
+              :cd-module)
+            (comment (io/prompt "What type of project is this?" {:m :cd-module :s :svga}))))))
 
 (defn- is-deployable []
   (and (project/project-name) (project/index-name)))
