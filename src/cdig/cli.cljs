@@ -75,7 +75,7 @@
 
 (defn cmd-compile []
   (io/print :yellow "Compiling deployable build...")
-  (project/compile))
+  (project/compile (project-type!)))
 
 (defn cmd-new []
   (if (fs/path-exists? "source")
@@ -102,7 +102,7 @@
 
 (defn cmd-watch []
   (io/print :yellow "Running development process... (press control-c to stop)")
-  (project/watch))
+  (project/watch (project-type!)))
 
 ; COMMANDS: SHORTCUTS
 

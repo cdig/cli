@@ -14,6 +14,9 @@
   (let [base-url (str "https://raw.githubusercontent.com/cdig/" (name type) "-starter/v4/dist/")]
     (dorun (map #(fs/download (str base-url %) %) files))))
 
+(defn- gulp [cmd]
+  (io/exec "gulp --gulpfile node_modules/cd-core/gulpfile.coffee --cwd ." cmd))
+
 (defn project-name []
   (fs/current-dirname))
 
@@ -25,8 +28,8 @@
   (fs/rm generated-files)
   (fs/rm system-files))
 
-(defn compile []
-  (io/exec "gulp prod"))
+(defn compile [type]
+  (gulp (str (name type) ":prod")))
 
 (defn new-project [type]
   (let [type-files (get new-project-files type)]
@@ -38,8 +41,8 @@
   (fs/rm system-files)
   (pull-from-origin type system-files)
   (if (fs/path-exists? "yarn.lock")
-   (io/exec "yarn upgrade")
-   (io/exec "yarn install")))
+    (io/exec "yarn upgrade")
+    (io/exec "yarn install")))
 
 (defn push []
   (let [project (project-name)
@@ -48,5 +51,5 @@
         s3-path (str "s3://lbs-cdn/" era "/")]
     (io/exec "aws s3 sync deploy/all" s3-path "--size-only --exclude \".*\" --cache-control max-age=31536000,immutable")))
 
-(defn watch []
-  (io/exec "gulp"))
+(defn watch [type]
+  (gulp (str (name type) ":dev")))
