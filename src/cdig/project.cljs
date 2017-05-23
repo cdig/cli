@@ -5,7 +5,7 @@
 
 (declare pull)
 
-(def system-files [".gitignore" "cdig.json" "gulpfile.coffee" "package.json"])
+(def system-files [".gitignore" "cdig.json" "package.json"])
 (def generated-files [".DS_Store" ".git" "bower.json" "bower_components" "deploy" "node_modules" "public" "yarn.lock"])
 (def new-project-files {:cd-module ["source/index.kit" "source/pages/ending.kit" "source/pages/title.kit" "source/styles/fonts.scss"]
                         :svga ["source/symbol.coffee" "source/config.coffee"]})
