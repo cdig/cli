@@ -107,7 +107,7 @@
 ; COMMANDS: SHORTCUTS
 
 (defn cmd-deploy []
-  (cmd-pull false)
+  (cmd-pull true)
   (cmd-compile)
   (cmd-push)
   (cmd-register))
