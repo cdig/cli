@@ -84,9 +84,9 @@
       (io/print :yellow (str "Creating a new " (name type) " project..."))
       (project/new-project type))))
 
-(defn cmd-pull []
+(defn cmd-pull [fast]
   (io/print :yellow "Pulling fresh system files...")
-  (project/pull (project-type!)))
+  (project/pull (project-type!) fast))
 
 (defn cmd-push []
   (io/print :yellow "Pushing to S3...")
@@ -107,13 +107,13 @@
 ; COMMANDS: SHORTCUTS
 
 (defn cmd-deploy []
-  (cmd-pull)
+  (cmd-pull false)
   (cmd-compile)
   (cmd-push)
   (cmd-register))
 
 (defn cmd-run []
-  (cmd-pull)
+  (cmd-pull true)
   (cmd-watch))
 
 ; MAIN

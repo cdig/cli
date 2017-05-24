@@ -37,12 +37,12 @@
     (pull-from-origin type type-files)
     (pull type)))
 
-(defn pull [type]
+(defn pull [type fast]
   (fs/rm system-files)
   (pull-from-origin type system-files)
-  (if (fs/path-exists? "yarn.lock")
-    (io/exec "yarn upgrade")
-    (io/exec "yarn install")))
+  (if (or fast (not (fs/path-exists? "yarn.lock")))
+    (io/exec "yarn install")
+    (io/exec "yarn upgrade")))
 
 (defn push []
   (let [project (project-name)
