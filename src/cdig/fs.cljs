@@ -5,6 +5,7 @@
 
 (def del (js/require "del"))
 (def fs (js/require "fs"))
+(def os (js/require "os"))
 (def path (js/require "path"))
 
 (defn readdir [filepath]
@@ -24,6 +25,9 @@
 
 (defn path-exists? [filepath]
   (.existsSync fs filepath))
+
+(defn homedir []
+  (.homedir os))
 
 (defn touch [filepath]
   (io/exec "touch" filepath))

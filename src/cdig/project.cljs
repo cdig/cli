@@ -41,7 +41,7 @@
   (fs/rm system-files)
   (pull-from-origin type system-files)
   (cond
-    (fs/path-exists? "~/cdig/cli/node_modules")
+    (fs/dir? (str (fs/homedir) "/cdig/cli/node_modules"))
     (io/exec "cp -a ~/cdig/cli/node_modules node_modules")
     
     (or fast
