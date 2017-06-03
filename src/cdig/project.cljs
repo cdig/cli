@@ -41,13 +41,15 @@
   (fs/rm system-files)
   (pull-from-origin type system-files)
   (cond
-    (fs/dir? (str (fs/homedir) "/cdig/cli/node_modules"))
-    (io/exec "cp -a ~/cdig/cli/node_modules node_modules")
+    (fs/dir? (str (fs/homedir) "/cdig/cli/node_modules")) ; Copy node_modules from ~
+    (when-not (fs/dir? "node_modules") ; But only if we need them
+      (io/exec "cp -a ~/cdig/cli/node_modules node_modules"))
     
-    (or fast
+    (or fast ; Do a fast install
         (not (fs/path-exists? "yarn.lock")))
     (io/exec "yarn install")
     
+    ; Do a slow install
     :else (io/exec "yarn upgrade")))
 
 (defn push []
