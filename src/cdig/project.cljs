@@ -40,15 +40,15 @@
 (defn pull [type fast]
   (fs/rm system-files)
   (pull-from-origin type system-files)
-  ; (cond
-    ; (fs/path-exists? "~/cdig/cli/node_modules")
-  (io/exec "cp -a ~/cdig/cli/node_modules node_modules"))
+  (cond
+    (fs/path-exists? "~/cdig/cli/node_modules")
+    (io/exec "cp -a ~/cdig/cli/node_modules node_modules")
     
-    ; (or fast
-    ;     (not (fs/path-exists? "yarn.lock")))
-    ; (io/exec "yarn install")
-    ;
-    ; :else (io/exec "yarn upgrade")))
+    (or fast
+        (not (fs/path-exists? "yarn.lock")))
+    (io/exec "yarn install")
+    
+    :else (io/exec "yarn upgrade")))
 
 (defn push []
   (let [project (project-name)
