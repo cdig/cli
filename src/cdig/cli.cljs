@@ -62,9 +62,10 @@
   (io/exec "brew upgrade")
   (io/exec "brew prune")
   (io/exec "brew cleanup")
-  (io/exec "npm install npm -g")
+  (io/exec "npm i -g npm")
   (io/exec "npm update -g")
   (io/exec "npm prune -g")
+  (io/exec "exec bash -l")
   (print-affirmation))
 
 ; COMMANDS: PROJECT
