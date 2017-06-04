@@ -59,4 +59,6 @@
     (io/exec "aws s3 sync deploy/all" s3-path "--size-only --exclude \".*\" --cache-control max-age=31536000,immutable")))
 
 (defn watch [type]
-  (gulp (str (name type) ":dev")))
+  (if (fs/path-exists? "node_modules")
+    (gulp (str (name type) ":dev"))
+    (io/print :red "Looks like you forgot to pull.")))

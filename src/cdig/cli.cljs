@@ -59,13 +59,14 @@
 (defn cmd-upgrade
   "Upgrade brew and all relevant global npm packages"
   []
+  (io/print :yellow "Upgrading. (Now is a good time for a coffee break.)")
   (io/exec "brew upgrade")
   (io/exec "brew prune")
   (io/exec "brew cleanup")
   (io/exec "npm i -g npm")
   (io/exec "npm update -g")
   (io/exec "npm prune -g")
-  (io/exec "exec bash -l")
+  (io/print :yellow "Upgrade finished. Please close and re-open the Terminal.")
   (print-affirmation))
 
 ; COMMANDS: PROJECT
