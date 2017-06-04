@@ -41,7 +41,7 @@
   (fs/rm system-files)
   (pull-from-origin type system-files)
   (cond
-    (fs/dir? (str (fs/homedir) "/cdig/cli/node_modules")) ; Copy node_modules from ~
+    (fs/path-exists? (str (fs/homedir) "/cdig/cli/node_modules")) ; Copy node_modules from ~
     (io/exec "cp -a ~/cdig/cli/node_modules .")
     
     (or fast ; Do a fast install
