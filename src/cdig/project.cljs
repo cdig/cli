@@ -7,7 +7,7 @@
 
 (def system-files [".gitignore" "cdig.json" "package.json"])
 (def generated-files [".DS_Store" ".git" "bower.json" "bower_components" "deploy" "gulpfile.coffee" "node_modules" "package-lock.json" "public" "yarn.lock"])
-(def new-project-files {:cd-module ["source/index.kit" "source/styles/fonts.scss"]
+(def new-project-files {:cd-module ["source/index.kit" "source/pages/objectives.html" "source/styles/fonts.scss"]
                         :svga ["source/symbol.coffee" "source/config.coffee"]})
 
 (defn- pull-from-origin [type files]
