@@ -12,6 +12,9 @@
 (defn exec [& pieces]
   (exec-sync (join " " pieces) (clj->js {:stdio "inherit"})))
 
+(defn exec-quietly [& pieces]
+  (exec-sync (join " " pieces) (clj->js {:stdio "ignore"})))
+
 ; COLOR
 
 (def colors (js/require "colors/safe"))

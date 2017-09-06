@@ -63,10 +63,10 @@
   (io/exec "brew upgrade")
   (io/exec "brew prune")
   (io/exec "brew cleanup")
-  (io/print :yellow "npm prune")
-  (io/exec "npm prune -g") ;; We'd prefer to do this after the update, but that might cause errors because the running npm will no longer match the installed npm
   (io/print :yellow "npm i -g npm etc")
   (io/exec "npm i -g npm cdig/cli gulp-cli coffeescript")
+  (io/print :yellow "npm prune")
+  (io/exec-quietly "npm prune -g")
   (io/print :yellow "Upgrade finished. Please close and re-open the Terminal.")
   (print-affirmation))
 
