@@ -63,12 +63,9 @@
   (io/exec "brew upgrade")
   (io/exec "brew prune")
   (io/exec "brew cleanup")
-  (io/print :yellow "npm i -g npm etc")
   (io/exec "npm i -g npm cdig/cli gulp-cli coffeescript")
-  (io/print :yellow "npm prune")
   (io/exec-quietly "npm prune -g")
-  (io/print :yellow "Upgrade finished. Please close and re-open the Terminal.")
-  (print-affirmation))
+  (io/print :yellow "Upgrade finished. Please close and re-open the Terminal."))
 
 ; COMMANDS: PROJECT
 
