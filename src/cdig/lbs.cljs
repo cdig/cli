@@ -29,9 +29,11 @@
    (io/print :red res)))
 
 (defn register []
-  (let [era "v4"
+  (let [era project/era
         project (str (project/project-name))
-        index (project/index-name)]
+        index-name (project/index-name)
+        head (project/index-head)
+        body (project/index-body)]
     (post (str lbs-domain "/api/artifacts/new")
-          {:era era :name project :source index}
+          {:era era :name project :source index-name :head head :body body}
           register-done)))
