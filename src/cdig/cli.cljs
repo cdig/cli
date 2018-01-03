@@ -60,6 +60,7 @@
   "Upgrade brew and all relevant global npm packages"
   []
   (io/print :yellow "Upgrading. (Now is a good time for a coffee break.)")
+  (project/clean)
   (io/exec "brew upgrade")
   (io/exec "brew prune")
   (io/exec "brew cleanup")
