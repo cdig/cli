@@ -62,9 +62,13 @@
     (fs/path-exists? (str (fs/homedir) "/cdig/cli/node_modules")) ; Copy node_modules from ~
     (io/exec "cp -a ~/cdig/cli/node_modules .")
     
-    (or fast ; Do a fast install
-        (not (fs/path-exists? "yarn.lock")))
+    ; No yarn.lock — full install
+    (not (fs/path-exists? "yarn.lock"))
     (io/exec "yarn install")
+    
+    ; Going fast — we're done!
+    fast
+    :done!
     
     ; Do a slow install
     :else (io/exec "yarn upgrade")))
