@@ -59,11 +59,11 @@
   (fs/rm system-files)
   (pull-from-origin type system-files)
   (cond
-    (fs/path-exists? (str (fs/homedir) "/cdig/cli/node_modules")) ; Copy node_modules from ~
+    (fs/path-exists? (str (fs/homedir) "/cdig/cli/node_modules")) ; Copy node_modules from ~/
     (io/exec "cp -a ~/cdig/cli/node_modules .")
     
-    ; No yarn.lock — full install
-    (not (fs/path-exists? "yarn.lock"))
+    ; No node_modules — full install
+    (not (fs/path-exists? "node_modules"))
     (io/exec "yarn install")
     
     ; Going fast — we're done!
