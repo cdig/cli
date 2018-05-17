@@ -1,6 +1,6 @@
 {
   "name": "cdig-cli",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "A CLI tool for CDIG developers",
   "dependencies": {
     "colors": "latest",
