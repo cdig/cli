@@ -9,7 +9,7 @@
 (def system-files ["cdig.json" "package.json"])
 (def generated-files [".DS_Store" ".git" ".gitignore" "bower.json" "bower_components" "deploy" "gulpfile.coffee" "node_modules" "package-lock.json" "public" "yarn.lock" "yarn-error.log"])
 (def new-project-files {:cd-module ["source/index.kit" "source/pages/objectives.html"]
-                        :svga ["source/symbol.coffee" "source/config.coffee"]})
+                        :svga ["source/root.coffee" "source/config.coffee"]})
 
 (defn- pull-from-origin [type files]
   (let [base-url (str "https://raw.githubusercontent.com/cdig/" (name type) "-starter/" era "/dist/")]
@@ -61,15 +61,15 @@
   (cond
     (fs/path-exists? (str (fs/homedir) "/cdig/cli/node_modules")) ; Copy node_modules from ~/
     (io/exec "cp -a ~/cdig/cli/node_modules .")
-    
+
     ; No node_modules — full install
     (not (fs/path-exists? "node_modules"))
     (io/exec "yarn install")
-    
+
     ; Going fast — we're done!
     fast
     :done!
-    
+
     ; Do a slow install
     :else (io/exec "yarn upgrade")))
 
