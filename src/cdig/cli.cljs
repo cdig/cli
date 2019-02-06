@@ -62,7 +62,6 @@
   (io/print :yellow "Upgrading. (Now is a good time for a coffee break.)")
   (project/clean)
   (io/exec "brew upgrade")
-  (io/exec "brew prune")
   (io/exec "brew cleanup")
   (io/exec "npm i -g npm cdig/cli gulp-cli coffeescript")
   (io/exec-quietly "npm prune -g")
@@ -134,7 +133,7 @@
                :auth [cmd-auth "    Get/set your LBS API token"]
                :help [cmd-help "    Display this helpful information"]
                :upgrade [cmd-upgrade " Upgrade all command line utilities"]
-               
+
                ; Project
                :clean [cmd-clean "   Delete all the auto-generated stuff in this folder"]
                :compile [cmd-compile " Make a deployable build of the project in this folder"]
@@ -143,7 +142,7 @@
                :push [cmd-push "    Upload items from the deploy folder to S3"]
                :register [cmd-register "Tell LBS about the project in this folder"]
                :watch [cmd-watch "   Continually make & serve a development build of the project in this folder"]
-               
+
                ; Shortcuts
                :deploy [cmd-deploy "  Shortcut: pull + compile + push + register"]
                :run [cmd-run "     Shortcut: pull + watch"]})
