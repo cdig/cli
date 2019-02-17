@@ -34,6 +34,6 @@
         index-name (project/index-name)
         head (project/index-head)
         body (project/index-body)]
-    (post (str lbs-domain "/api/artifacts/new")
+    (post (str lbs-domain "/cli/artifacts")
           {:era era :name project :source index-name :head head :body body}
           register-done)))
