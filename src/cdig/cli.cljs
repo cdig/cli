@@ -60,7 +60,6 @@
   "Upgrade brew and all relevant global npm packages"
   []
   (io/print :yellow "Upgrading. (Now is a good time for a coffee break.)")
-  (project/clean)
   (io/exec "brew upgrade")
   (io/exec "brew cleanup")
   (io/exec "npm i -g npm cdig/cli gulp-cli coffeescript")
