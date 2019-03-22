@@ -6,8 +6,8 @@
 (declare pull)
 
 (def era "v4-1")
-(def system-files ["cdig.json" "package.json"])
-(def generated-files [".DS_Store" ".git" ".gitignore" "bower.json" "bower_components" "deploy" "gulpfile.coffee" "node_modules" "package-lock.json" "public" "yarn.lock" "yarn-error.log"])
+(def system-files [".gitignore" "cdig.json" "package.json"])
+(def generated-files [".DS_Store" ".git" "bower.json" "bower_components" "deploy" "gulpfile.coffee" "node_modules" "package-lock.json" "public" "yarn.lock" "yarn-error.log"])
 (def new-project-files {:cd-module ["source/index.kit" "source/pages/objectives.html"]
                         :svga ["source/root.coffee" "source/config.coffee"]})
 
