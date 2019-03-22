@@ -59,12 +59,7 @@
 (defn cmd-upgrade
   "Upgrade brew and all relevant global npm packages"
   []
-  (io/print :yellow "Upgrading. (Now is a good time for a coffee break.)")
-  (io/exec "brew upgrade")
-  (io/exec "brew cleanup")
-  (io/exec "npm i -g npm cdig/cli gulp-cli coffeescript")
-  (io/exec-quietly "npm prune -g")
-  (io/print :yellow "Upgrade complete. Back to work, slacker!"))
+  (io/print :yellow "Please go to https://github.com/cdig/lunchboxsessions/wiki/CLI-Notes and follow the upgrade guide."))
 
 ; COMMANDS: PROJECT
 
