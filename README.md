@@ -1,14 +1,20 @@
-A CLI tool for CDIG developers
+A CLI tool for CDIG Inc.
 
-### Dev
+Install:
 
-First, run `yarn` to fetch the deps.
-
-Build a dev version with `cljs build dev` or `cljs watch dev`, and then use the `cdig` bin in this folder.
-
-Build a prod version with `cljs build prod` or `cdig watch prod`, then push to github and install with `npm i -g cdig/cli`.
-
-UPDATE — to build use:
 ```
-clj -m cljs.main --target node --output-to cdig.js --optimizations simple -c cdig.cli
+brew install node awscli
+npm i -g cdig gulp-cli coffeescript
+```
+
+Set up AWS:
+
+```
+aws configure
+```
+
+Set up LBS API key:
+
+```
+cdig auth BIG_LONG_API_KEY
 ```

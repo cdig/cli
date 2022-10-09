@@ -1,17 +1,14 @@
 {
-  "name": "cdig-cli",
-  "version": "4.2.0",
-  "description": "A CLI tool for CDIG developers",
-  "dependencies": {
-    "colors": "1.4.0",
-    "del": "6.0.0",
-    "keytar": "7.7.0",
-    "sync-request": "6.1.0",
-    "syncprompt": "2.0.0"
-  },
+  "name": "cdig",
+  "version": "5.0.0",
+  "description": "A CLI tool for CDIG Inc.",
   "bin": {
     "cdig": "cdig.js"
   },
-  "license": "UNLICENSED",
-  "private": true
+  "dependencies": {
+    "coffeescript": "^2.7.0",
+    "keytar": "7.9.0",
+    "prompt-sync": "4.2.0"
+  },
+  "license": "ISC"
 }
