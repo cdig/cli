@@ -125,13 +125,13 @@ commands.help = (mode)->
 commands.update = (mode)->
   if mode is "all"
     console.log yellow "\nUpdating " + cyan "brew " + yellow "packages...\n"
-    # exec "brew upgrade"
-    # exec "brew cleanup"
+    exec "brew upgrade"
+    exec "brew cleanup"
     console.log yellow "\n\nUpdating " + cyan "npm " + yellow "packages...\n"
-    # exec "npm i -g npm"
+    exec "npm i -g npm"
     console.log ""
   console.log yellow "\nUpdating the " + cyan "cdig " + yellow "tool...\n"
-  # exec "npm i -g cdig"
+  exec "npm i -g cdig"
   console.log ""
 
 
