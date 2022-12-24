@@ -124,13 +124,15 @@ commands.help = (mode)->
 
 commands.update = (mode)->
   if mode is "all"
-    console.log yellow "Installing the latest " + green "Homebrew " + yellow "packages..."
-    exec "brew upgrade"
-    exec "brew cleanup"
-    console.log yellow "Installing the latest " + green "NPM " + yellow "packages..."
-    exec "npm i -g npm"
-  console.log yellow "Installing the latest version of the CDIG tool..."
-  exec "npm i -g cdig"
+    console.log yellow "\nUpdating " + cyan "brew " + yellow "packages...\n"
+    # exec "brew upgrade"
+    # exec "brew cleanup"
+    console.log yellow "\n\nUpdating " + cyan "npm " + yellow "packages...\n"
+    # exec "npm i -g npm"
+    console.log ""
+  console.log yellow "\nUpdating the " + cyan "cdig " + yellow "tool...\n"
+  # exec "npm i -g cdig"
+  console.log ""
 
 
 # LBS Commands
