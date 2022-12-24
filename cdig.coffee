@@ -50,6 +50,8 @@ rm = (filePath)-> if exists filePath then fs.rmSync filePath, recursive: true
 isDir = (filePath)-> fs.statSync(filePath).isDirectory()
 read = (filePath)-> if exists filePath then fs.readFileSync(filePath).toString()
 
+version = ()-> require("./package.json").version
+
 post = (url, data)->
   token = await keytar.getPassword "com.lunchboxsessions.cli", "api-token"
   await fetch url,
@@ -106,7 +108,7 @@ commands = {}
 
 commands.help = (mode)->
   console.log ""
-  console.log cyan "  The CDIG Tool • Version #{require("./package.json").version}"
+  console.log cyan "  The CDIG Tool • Version #{version()}"
 
   if mode isnt "dev"
     console.log ""
@@ -123,6 +125,7 @@ commands.help = (mode)->
   console.log ""
 
 commands.update = (mode)->
+  oldVersion = version()
   if mode is "all"
     console.log yellow "\nUpdating " + cyan "brew " + yellow "packages...\n"
     exec "brew upgrade"
@@ -133,6 +136,10 @@ commands.update = (mode)->
   console.log yellow "\nUpdating the " + cyan "cdig " + yellow "tool...\n"
   exec "npm i -g cdig"
   console.log ""
+  if oldVersion is version()
+    console.log yellow "The " + cyan "cdig " + yellow "tool is already up-to-date at version #{version()}."
+  else
+    console.log yellow "The " + cyan "cdig " + yellow "tool has been updated to version #{version()}"
 
 
 # LBS Commands
