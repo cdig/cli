@@ -132,10 +132,8 @@ commands.update = (mode)->
     console.log yellow "\n\nUpdating " + cyan "npm " + yellow "packages...\n"
     exec "npm i -g npm --silent"
     exec "npm i -g coffeescript gulp-cli --silent"
-    console.log ""
   console.log yellow "\nUpdating the " + cyan "cdig " + yellow "tool...\n"
   exec "npm i -g cdig --silent"
-  console.log ""
 
 
 # LBS Commands
