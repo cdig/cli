@@ -11,8 +11,8 @@ descriptions =
   Tool:
     help:             "Display this helpful information"
     "help dev":       "Display advanced usage information"
-    update:           "Install the latest version of the tool"
-    "update all":     "Update brew, npm, and the tool"
+    update:           "Install the latest version of the cdig tool"
+    "update all":     "Update brew, npm, cdig (may take 10 minutes)"
   LBS:
     auth:             "View the current LBS API token"
     "auth TOKEN":     "Set the LBS API token"
@@ -132,6 +132,7 @@ commands.update = (mode)->
     exec "brew cleanup"
     console.log yellow "\n\nUpdating " + cyan "npm " + yellow "packages...\n"
     exec "npm i -g npm"
+    exec "npm i -g coffeescript gulp-cli"
     console.log ""
   console.log yellow "\nUpdating the " + cyan "cdig " + yellow "tool...\n"
   exec "npm i -g cdig"
@@ -140,6 +141,7 @@ commands.update = (mode)->
     console.log yellow "The " + cyan "cdig " + yellow "tool is already up-to-date (version #{version()})"
   else
     console.log yellow "The " + cyan "cdig " + yellow "tool has been updated to version #{version()}"
+  console.log ""
 
 
 # LBS Commands

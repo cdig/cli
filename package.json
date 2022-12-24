@@ -1,12 +1,13 @@
 {
   "name": "cdig",
-  "version": "5.0.7",
+  "version": "5.0.8",
   "description": "A CLI tool for CDIG Inc.",
   "bin": {
     "cdig": "cdig.coffee"
   },
   "dependencies": {
     "coffeescript": "^2.7.0",
+    "gulp-cli": "2.3.0",
     "keytar": "7.9.0",
     "prompt-sync": "4.2.0"
   },
