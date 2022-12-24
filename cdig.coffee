@@ -122,19 +122,14 @@ commands.help = (mode)->
       console.log yellow "    " + name.padEnd(16) + blue description
   console.log ""
 
-commands.update = ()->
-  console.log yellow "Installing the latest version of the tool..."
-  exec "npm i -g cdig"
-
-commands.upgrade = ()->
-  console.log yellow "Installing the latest version of the tool and all dependencies..."
-  console.log green "brew upgrade"
-  exec "brew upgrade"
-  console.log green "brew cleanup"
-  exec "brew cleanup"
-  console.log green "npm i -g npm"
-  exec "npm i -g npm"
-  console.log green "npm i -g cdig"
+commands.update = (mode)->
+  if mode is "all"
+    console.log green "Installing the latest " + green "Homebrew " + yellow "packages..."
+    exec "brew upgrade"
+    exec "brew cleanup"
+    console.log green "Installing the latest " + green "NPM " + yellow "packages..."
+    exec "npm i -g npm"
+  console.log yellow "Installing the latest version of the CDIG tool..."
   exec "npm i -g cdig"
 
 
