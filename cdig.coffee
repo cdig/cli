@@ -137,7 +137,7 @@ commands.update = (mode)->
   exec "npm i -g cdig"
   console.log ""
   if oldVersion is version()
-    console.log yellow "The " + cyan "cdig " + yellow "tool is already up-to-date at version #{version()}."
+    console.log yellow "The " + cyan "cdig " + yellow "tool is already up-to-date (version #{version()})"
   else
     console.log yellow "The " + cyan "cdig " + yellow "tool has been updated to version #{version()}"
 
