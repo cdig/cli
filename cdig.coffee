@@ -129,7 +129,7 @@ commands.update = (mode)->
     console.log yellow "\nUpdating " + cyan "brew " + yellow "packages...\n"
     exec "brew upgrade"
     exec "brew cleanup"
-    console.log yellow "\n\nUpdating " + cyan "npm " + yellow "packages...\n"
+    console.log yellow "\nUpdating " + cyan "npm " + yellow "packages...\n"
     exec "npm i -g npm --silent"
     exec "npm i -g coffeescript gulp-cli --silent"
   console.log yellow "\nUpdating the " + cyan "cdig " + yellow "tool...\n"
