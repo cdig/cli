@@ -28,6 +28,7 @@ descriptions =
     deploy:           "compile + push + register"
   Dev:
     "register local": "For testing deployment, register with LBS at localhost:3000"
+    "screenshot FLAG PATH": "Produce optimized PNGs. FLAG must be --dither or --no-dither"
 
 
 # Helpers #########################################################################################
@@ -260,6 +261,14 @@ commands.run = ()->
 commands.deploy = ()->
   do commands[c] for c in ["compile", "push", "register"]
 
+
+# Dev Commands ####################################################################################
+
+commands.screenshot = (ditherFlag, path)->
+  flag = if ditherFlag is "--dither" then "" else "--nofs"
+  for i in [16, 20, 24, 32, 40, 48, 64, 80, 96, 128, 192, 256]
+    exec "pngquant #{flag} --output ~/Desktop/#{i}.png #{i} #{path}"
+  null
 
 
 # Main ############################################################################################
