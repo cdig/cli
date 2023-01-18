@@ -140,9 +140,15 @@ commands.update = (mode)->
     console.log yellow "\nUpdating " + cyan "npm " + yellow "packages...\n"
     exec "npm i -g npm --silent"
     exec "npm i -g coffeescript gulp-cli --silent"
-  console.log yellow "\nUpdating the " + cyan "cdig " + yellow "tool...\n"
+  console.log yellow "\nUpdating " + cyan "cdig " + yellow "package...\n"
   exec "npm i -g cdig --silent"
 
+  console.log green "Your CDIG Tool is now version:"
+  exec "cdig version"
+  console.log ""
+
+commands.version = ()->
+  console.log version()
 
 # LBS Commands
 
