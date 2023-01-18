@@ -111,23 +111,30 @@ commands.help = (mode)->
   console.log ""
   console.log cyan "  The CDIG Tool • Version #{version()}"
 
-  if mode isnt "dev"
+  inDevMode = mode is "dev"
+
+  if not inDevMode
     console.log ""
     console.log "  You can run any of the commands listed below."
     console.log "  For example, run " + yellow("cdig help") + " to see this info."
 
-  for label, group of descriptions
-    continue if (label is "Dev") isnt (mode is "dev")
+  maxNameLength = 0
+  for label, group of descriptions when (label is "Dev") is inDevMode
+    for name, description of group
+      maxNameLength = Math.max name.length, maxNameLength
+
+  for label, group of descriptions when (label is "Dev") is inDevMode
     console.log ""
     console.log green "  " + label + " Commands:"
     console.log ""
     for name, description of group
-      console.log yellow "    " + name.padEnd(16) + blue description
+      console.log yellow "    " + name.padEnd(maxNameLength + 2) + blue description
   console.log ""
 
 commands.update = (mode)->
   if mode is "all"
     console.log yellow "\nUpdating " + cyan "brew " + yellow "packages...\n"
+    exec "brew update"
     exec "brew upgrade"
     exec "brew cleanup"
     console.log yellow "\nUpdating " + cyan "npm " + yellow "packages...\n"
