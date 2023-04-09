@@ -44,6 +44,9 @@ do ()->
   for color, n of red: "31", green: "32", yellow: "33", blue: "34", magenta: "35", cyan: "36"
     do (color, n)-> global[color] = (t)-> "\x1b[#{n}m" + t + "\x1b[0m"
 
+# console.log should have expression semantics
+log = (...args)-> console.log ...args; args[0]
+
 # Saner default for execSync
 exec = (cmd)-> child_process.execSync cmd, stdio: "inherit"
 
@@ -73,14 +76,14 @@ isUrl = (str)->
   str.startsWith("http://") or str.startsWith("https://")
 
 prompt = (question, answers)->
-  console.log yellow question
+  log yellow question
   for k, v of answers
-    console.log "Enter #{k} for #{v}"
+    log "Enter #{k} for #{v}"
   answer = promptSync(sigint:true) "Answer: "
   if answers[answer]
     answers[answer]
   else
-    console.log red "... Wasn't expecting that answer."
+    log red "... Wasn't expecting that answer."
 
 # Get or prompt for the project type. This function is stateful to avoid redundant prompts.
 projectType = null
@@ -99,8 +102,8 @@ getProjectType = ()->
 commandHasNeededFiles = ({command, files, hint, msg})->
     hasFiles = exists files
     if not hasFiles
-      if hint? then console.log red "Cannot #{command} — please make sure you're in the correct folder, and run " + yellow "cdig #{hint} " + red "if needed"
-      if msg? then console.log msg
+      if hint? then log red "Cannot #{command} — please make sure you're in the correct folder, and run " + yellow "cdig #{hint} " + red "if needed"
+      if msg? then log msg
     return hasFiles
 
 
@@ -118,45 +121,45 @@ printHelp = (helpItems)->
       maxNameLength = Math.max name.length, maxNameLength
 
   for label, group of helpItems
-    console.log ""
-    console.log green "  " + label
-    console.log ""
+    log ""
+    log green "  " + label
+    log ""
     for name, description of group
-      console.log yellow "    " + name.padEnd(maxNameLength + 2) + blue description
+      log yellow "    " + name.padEnd(maxNameLength + 2) + blue description
 
 
 commands.help = (mode)->
-  console.log ""
-  console.log cyan "  The CDIG Tool • Version #{version()}"
+  log ""
+  log cyan "  The CDIG Tool • Version #{version()}"
 
   if mode isnt "dev"
-    console.log ""
-    console.log "  You can run any of the commands listed below."
-    console.log "  For example, run " + yellow("cdig help") + " to see this info."
+    log ""
+    log "  You can run any of the commands listed below."
+    log "  For example, run " + yellow("cdig help") + " to see this info."
     printHelp basicHelp
   else
     printHelp devHelp
 
-  console.log ""
+  log ""
 
 commands.update = (mode)->
   if mode is "all"
-    console.log yellow "\nUpdating " + cyan "brew " + yellow "packages...\n"
+    log yellow "\nUpdating " + cyan "brew " + yellow "packages...\n"
     exec "brew update"
     exec "brew upgrade"
     exec "brew cleanup"
-    console.log yellow "\nUpdating " + cyan "npm " + yellow "packages...\n"
+    log yellow "\nUpdating " + cyan "npm " + yellow "packages...\n"
     exec "npm i -g npm --silent"
     exec "npm i -g coffeescript gulp-cli --silent"
-  console.log yellow "\nUpdating " + cyan "cdig " + yellow "package...\n"
+  log yellow "\nUpdating " + cyan "cdig " + yellow "package...\n"
   exec "npm i -g cdig --silent"
 
-  console.log green "Your CDIG Tool is now version:"
+  log green "Your CDIG Tool is now version:"
   exec "cdig version"
-  console.log ""
+  log ""
 
 commands.version = ()->
-  console.log version()
+  log version()
 
 # LBS Commands
 
@@ -164,10 +167,10 @@ commands.version = ()->
 commands.auth = (token)->
   if token?
     keytar.setPassword "com.lunchboxsessions.cli", "api-token", token
-    console.log green "Your API token has been saved"
+    log green "Your API token has been saved"
   else
     token = await keytar.getPassword "com.lunchboxsessions.cli", "api-token"
-    console.log yellow "Your current token is: " + blue token
+    log yellow "Your current token is: " + blue token
 
 
 # Project Commands
@@ -217,17 +220,17 @@ indexBody = ()-> indexFragment "body"
 
 commands.new = ()->
   if exists "source"
-    console.log red "This folder already contains a project"
+    log red "This folder already contains a project"
   else
     if type = getProjectType()
-      console.log yellow "Creating a new #{type} project..."
+      log yellow "Creating a new #{type} project..."
       typeFiles = newProjectFiles[type]
       mkdir "resources"
       pullFromOrigin type, typeFiles
 
 commands.pull = ()->
   return unless commandHasNeededFiles command: "watch", files: "source", hint: "new"
-  console.log yellow "Downloading system files and dependencies..."
+  log yellow "Downloading system files and dependencies..."
   type = getProjectType()
   rm file for file in systemFiles
   pullFromOrigin type, systemFiles
@@ -235,30 +238,30 @@ commands.pull = ()->
 
 commands.clean = ()->
   return unless commandHasNeededFiles command: "clean", files: "source", msg: red "Cleaning cancelled — this doesn't look like a cdig project. Make sure you're in the correct folder."
-  console.log yellow "Cleaning..."
+  log yellow "Cleaning..."
   rm file for file in systemFiles
   rm file for file in generatedFiles
 
 
 commands.watch = ()->
   return unless commandHasNeededFiles command: "watch", files: "node_modules", hint: "pull"
-  console.log yellow "Watching... (press control-c to stop)"
+  log yellow "Watching... (press control-c to stop)"
   gulp getProjectType() + ":dev"
 
 
 commands.compile = ()->
   return unless commandHasNeededFiles command: "compile", files: "node_modules", hint: "pull"
-  console.log yellow "Compiling deployable build..."
+  log yellow "Compiling deployable build..."
   gulp getProjectType() + ":prod"
 
 commands.push = ()->
   return unless commandHasNeededFiles command: "push", files: "deploy", hint: "compile"
-  console.log yellow "Pushing to S3..."
+  log yellow "Pushing to S3..."
   exec "aws s3 sync deploy/all s3://lbs-cdn/#{era}/ --size-only --exclude \".*\" --cache-control max-age=31536000,immutable"
 
 commands.register = ()->
   return unless commandHasNeededFiles command: "register", files: "deploy", hint: "compile"
-  console.log yellow "Registering with LBS..."
+  log yellow "Registering with LBS..."
   domain = flags.lbs or "https://www.lunchboxsessions.com"
   res = await post domain + "/cli/artifacts",
     era: era
@@ -267,11 +270,11 @@ commands.register = ()->
     head: indexHead()
     body: indexBody()
   text = await res.text()
-  console.log yellow text
+  log yellow text
   if isUrl text
     exec "open #{text}"
   else
-    console.log red text
+    log red text
 
 
 commands.run = ()->
@@ -308,5 +311,5 @@ command = args.shift() or "help"
 if c = commands[command]
   c ...args
 else
-  console.log red "\n  Error: " + yellow command + red " is not a valid command."
+  log red "\n  Error: " + yellow command + red " is not a valid command."
   commands.help()
