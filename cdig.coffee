@@ -32,8 +32,9 @@ devHelp =
     scan:                   "Scans a lesson for translation issues"
     "screenshot PATH":      "Saves optimized PNGs to ~/Desktop. To dither, use --dither"
   Flags:
-    "--gulp=PATH":          "Specify the gulpfile to use. Eg: --gulp=dev/cd-core/gulpfile.coffee"
-    "--lbs=PATH":           "Specify the LBS url to use. Eg: --lbs=http://localhost:3000"
+    "--gulp PATH":          "Specify the gulpfile to use. Eg: cdig run --gulp dev/cd-core/gulpfile.coffee"
+    "--lbs PATH":           "Specify the LBS url to use. Eg: cdig deploy --lbs http://localhost:3000"
+    "--locale LOCALE":      "Specify the locale to use when building a cd-module. Eg: cdig run --locale es"
 
 
 # Helpers #########################################################################################
@@ -222,7 +223,7 @@ pullNodeModules = ()->
 gulp = (cmd)->
   gulpfile = flags.gulp or "node_modules/cd-core/gulpfile.coffee"
   fullCmd = "gulp --gulpfile #{gulpfile} --cwd . #{cmd}"
-  fullCmd += "--locale " + flags.locale if flags.locale # Support for locale-aware cd-module
+  fullCmd += " --locale " + flags.locale if flags.locale # Support for locale-aware cd-module
   exec fullCmd
 
 last = (arr)-> arr[arr.length-1]
@@ -390,13 +391,13 @@ commands.scan = ()->
 args = process.argv[2..]
 flags = {}
 
-args = args.filter (arg)->
-  isFlag = arg.startsWith "-"
-  if isFlag
-    [k, v] = arg.split "="
-    k = k.replace /-+/, "" # strip leading dashes
+# Currently only supports `--flag foo`-style flags
+for arg, i in args by -1
+  if arg.startsWith "-"
+    k = arg.replace /-+/, "" # strip leading dashes
+    v = args[i+1]
     flags[k] = v
-  !isFlag
+    args.splice i, 2
 
 command = args.shift() or "help"
 
