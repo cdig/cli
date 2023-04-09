@@ -220,11 +220,15 @@ pullNodeModules = ()->
   else
     exec "npm update --silent"
 
-gulp = (cmd)->
+gulp = (mode)->
   gulpfile = flags.gulp or "node_modules/cd-core/gulpfile.coffee"
-  fullCmd = "gulp --gulpfile #{gulpfile} --cwd . #{cmd}"
-  fullCmd += " --locale " + flags.locale if flags.locale # Support for locale-aware cd-module
-  exec fullCmd
+  cmd = "gulp --gulpfile #{gulpfile} --cwd . #{mode}"
+
+  # Support for locale-aware cd-module
+  locale = flags.locale or flags.l
+  cmd += " --locale " + locale if locale
+
+  exec cmd
 
 last = (arr)-> arr[arr.length-1]
 
@@ -374,14 +378,16 @@ commands.scan = ()->
 
     # No diff!
     else
-      log padAround "Old and new versions of this page are identical. Nice!" + "\n"
+      log padAround "Old and Current versions of this page are identical. Nice!" + "\n"
 
   log cyan divider()
 
   if hasDiff
     log cyan padAround "Analysis complete. Scroll up to the top!"
   else
-    log green "The old and new English versions are identical. Please return this lesson to the Dropbox and proceed to the next lesson."
+    log green padAround "All Old and Current HTML pages in this lesson are identical."
+    log padAround "Please proceed to test, fix, and deploy the Spanish version,"
+    log padAround "and then return the lesson to the Dropbox when that is done."
 
   log cyan divider()
 
@@ -391,7 +397,6 @@ commands.scan = ()->
 args = process.argv[2..]
 flags = {}
 
-# Currently only supports `--flag foo`-style flags
 for arg, i in args by -1
   if arg.startsWith "-"
     k = arg.replace /-+/, "" # strip leading dashes
