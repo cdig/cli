@@ -29,6 +29,7 @@ basicHelp =
 
 devHelp =
   "Special Commands":
+    scan:                   "Scans a lesson for translation issues"
     "screenshot PATH":      "Saves optimized PNGs to ~/Desktop. To dither, use --dither"
   Flags:
     "--gulp=PATH":          "Specify the gulpfile to use. Eg: --gulp=dev/cd-core/gulpfile.coffee"
@@ -40,19 +41,44 @@ devHelp =
 
 # Who needs chalk when you can just roll your own ANSI escape sequences
 do ()->
-  global.white = (t)-> t
-  for color, n of red: "31", green: "32", yellow: "33", blue: "34", magenta: "35", cyan: "36"
-    do (color, n)-> global[color] = (t)-> "\x1b[#{n}m" + t + "\x1b[0m"
+  fmts =
+    bold: 1, dim: 2, italic: 3, underline: 4, overline: 53, inverse: 7, strike: 9,
+    black: 30, red: 31, green: 32, yellow: 33, blue: 34, magenta: 35, cyan: 36, white: 37,
+    blackBright: 90, grey: 90, redBright: 91, greenBright: 92, yellowBright: 93, blueBright: 94, magentaBright: 95, cyanBright: 96, whiteBright: 97,
+    bgBlack: 40, bgRed: 41, bgGreen: 42, bgYellow: 43, bgBlue: 44, bgMagenta: 45, bgCyan: 46, bgWhite: 47,
+    bgBlackBright: 100, bgGrey: 100, bgRedBright: 101, bgGreenBright: 102, bgYellowBright: 103, bgBlueBright: 104, bgMagentaBright: 105, bgCyanBright: 106, bgWhiteBright: 107
+  for fmt, v of fmts
+    do (fmt, v)-> global[fmt] = (t)-> "\x1b[#{v}m" + t + "\x1b[0m"
+
+# Pad the start and end of a string to a target length
+padAround = (str, len = 80, char = " ")->
+  str.padStart(Math.ceil(len/2 + str.length/2), char).padEnd(len, char)
+
+# Wrap a string to the a desired character length
+# https://stackoverflow.com/a/51506718/313576
+linewrap = (s, len = 80, sep = "\n")-> s.replace new RegExp("(?![^\\n]{1,#{len}}$)([^\\n]{1,#{len}})\\s", "g"), "$1#{sep}"
+
+# Prepend a string with a newline. Useful when logging.
+br = (m)-> "\n" + m
+
+# Indent a string using a given line prefix
+indent = (str, prefix = "  ")-> prefix + str.replaceAll "\n", "\n" + prefix
+
+# Surround a string with another string
+surround = (inner, outer = " ")-> outer + inner + outer
+
+# Generate a nice divider, optionally with text in the middle
+divider = (s = "")-> br padAround(s, 80, "─") + "\n"
 
 # console.log should have expression semantics
 log = (...args)-> console.log ...args; args[0]
 
 # Saner default for execSync
-exec = (cmd)-> child_process.execSync cmd, stdio: "inherit"
+exec = (cmd, opts = {stdio: "inherit"})-> child_process.execSync cmd, opts
 
 # Little sugary filesystem helpers
 exists = (filePath)-> fs.existsSync filePath
-readdir = (filePath)-> fs.readdirSync filePath
+readdir = (filePath)-> fs.readdirSync(filePath).filter (i)-> i isnt ".DS_Store"
 mkdir = (filePath)-> fs.mkdirSync filePath, recursive: true
 rm = (filePath)-> if exists filePath then fs.rmSync filePath, recursive: true
 isDir = (filePath)-> fs.statSync(filePath).isDirectory()
@@ -78,7 +104,7 @@ isUrl = (str)->
 prompt = (question, answers)->
   log yellow question
   for k, v of answers
-    log "Enter #{k} for #{v}"
+    log "Enter #{cyan k} for #{v}"
   answer = promptSync(sigint:true) "Answer: "
   if answers[answer]
     answers[answer]
@@ -204,7 +230,7 @@ projectName = ()->
 
 indexName = ()->
   if isDir "deploy"
-    path.basename fs.readdirSync("deploy/index")[0]
+    path.basename readdir("deploy/index")[0]
 
 indexFragment = (fragmentName)->
   file = read "deploy/all/#{indexName()}"
@@ -291,6 +317,70 @@ commands.screenshot = (path)->
   for i in [16, 20, 24, 32, 40, 48, 64, 80, 96, 128, 192, 256]
     exec "pngquant #{flag} --output ~/Desktop/#{i}.png #{i} #{path}"
   null
+
+commands.scan = ()->
+  pagesPath = "source/pages/"
+  enPagesPath = "source/pages-en/"
+
+  exec "clear"
+
+  # Print the name of the lesson folder
+  name = path.basename process.cwd()
+  log br(padAround(surround(name), 80, "◜◝◟◞")).replace(name, magenta name).replaceAll /([◜◝◟◞])/g, cyan "$1"
+  log ""
+
+  # Bail if this lesson hasn't been translated
+  if not exists enPagesPath
+    log linewrap "Easy! This lesson hasn't been translated to Spanish. Please return it to the Dropbox and proceed to the next lesson."
+    log divider()
+    return
+
+  # Print the instructions
+  instructions = "For each diff below, edit the HTML in pages-en and pages-es to match pages."
+  log padAround(instructions).replaceAll(/(pages(-en|-es)*)/g, yellow "$1")
+  log ""
+  log green "                        Current English: " + yellow "source/pages"
+  log red   "                            Old English: " + yellow "source/pages-en"
+  log       "                                Spanish: " + yellow "source/pages-es"
+  log "\n"
+
+  pages = readdir enPagesPath
+  hasDiff = false
+
+  for page, i in pages
+    log cyan divider surround "#{page} (#{i+1}/#{pages.length})"
+
+    # Compute the diff
+    old = surround enPagesPath + page, '"'
+    nue = surround pagesPath + page, '"'
+    diff = exec "diff -u #{old} #{nue} | diff-so-fancy", encoding: "utf-8"
+
+    # We've got a diff!
+    if diff.length
+      hasDiff = true
+
+      # Split the diff into lines, and ignore some noise at the beginning
+      lines = diff.split("\n")[3..]
+
+      for line, j in lines
+        # Some lines just show a path where a change occurs — replace those with an ellipsis
+        if line.indexOf(pagesPath + page) > 0
+          log br(dim padAround "...") + "\n" if j > 0
+        else
+          log line
+
+    # No diff!
+    else
+      log padAround "Old and new versions of this page are identical. Nice!" + "\n"
+
+  log cyan divider()
+
+  if hasDiff
+    log cyan padAround "Analysis complete. Scroll up to the top!"
+  else
+    log green "The old and new English versions are identical. Please return this lesson to the Dropbox and proceed to the next lesson."
+
+  log cyan divider()
 
 
 # Main ############################################################################################
