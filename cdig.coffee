@@ -221,7 +221,9 @@ pullNodeModules = ()->
 
 gulp = (cmd)->
   gulpfile = flags.gulp or "node_modules/cd-core/gulpfile.coffee"
-  exec "gulp --gulpfile #{gulpfile} --cwd . #{cmd}"
+  fullCmd = "gulp --gulpfile #{gulpfile} --cwd . #{cmd}"
+  fullCmd += "--locale " + flags[locale] if flags[locale] # Support for locale-aware cd-module
+  exec fullCmd
 
 last = (arr)-> arr[arr.length-1]
 
