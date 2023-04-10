@@ -225,7 +225,7 @@ gulp = (mode)->
   cmd = "gulp --gulpfile #{gulpfile} --cwd . #{mode}"
 
   # Support for locale-aware cd-module
-  locale = flags.locale or flags.l
+  locale = flags.l or flags.locale
   cmd += " --locale " + locale if locale
 
   exec cmd
@@ -233,7 +233,9 @@ gulp = (mode)->
 last = (arr)-> arr[arr.length-1]
 
 projectName = ()->
-  last process.cwd().split(path.sep)
+  name = last process.cwd().split path.sep
+  name += "@" + locale if locale = flags.l or flags.locale
+  name
 
 indexName = ()->
   if isDir "deploy"
