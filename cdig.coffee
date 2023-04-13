@@ -25,7 +25,7 @@ basicHelp =
     push:                   "Upload the optimized build to our servers"
     register:               "Create an Artifact for the uploaded build\n"
     run:                    "clean + pull + watch"
-    deploy:                 "compile + push + register"
+    deploy:                 "clean + pull + compile + push + register"
 
 devHelp =
   "Special Commands":
@@ -316,7 +316,7 @@ commands.run = ()->
   do commands[c] for c in ["clean", "pull", "watch"]
 
 commands.deploy = ()->
-  do commands[c] for c in ["compile", "push", "register"]
+  do commands[c] for c in ["clean", "pull", "compile", "push", "register"]
 
 
 # Dev Commands ####################################################################################
