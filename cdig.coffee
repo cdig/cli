@@ -319,7 +319,7 @@ commands.deploy = ()->
   do commands[c] for c in ["clean", "pull", "compile", "push", "register"]
 
 
-# Dev Commands ####################################################################################
+# Dev Commands
 
 commands.screenshot = (path)->
   flag = if flags.dither then "" else "--nofs"
