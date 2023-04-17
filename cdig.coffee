@@ -29,6 +29,7 @@ basicHelp =
 
 devHelp =
   "Special Commands":
+    monday:                 "Print out a shuffled list of names"
     scan:                   "Scans a lesson for translation issues"
     "screenshot PATH":      "Saves optimized PNGs to ~/Desktop. To dither, use --dither"
   Flags:
@@ -320,6 +321,13 @@ commands.deploy = ()->
 
 
 # Dev Commands
+
+commands.monday = ()->
+  names = ["Alex","Carl","Chris","Crystal","Emily","Ivan","Keelan","Kirstin","Lenore","Mark","Nathan","Owen","Robyn"]
+  while names.length
+    spliced = names.splice Math.random() * names.length |0, 1
+    log yellow " • " + spliced[0]
+  log ""
 
 commands.screenshot = (path)->
   flag = if flags.dither then "" else "--nofs"
