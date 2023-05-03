@@ -5,6 +5,7 @@ fs = require "node:fs"
 keytar = require "keytar"
 path = require "node:path"
 promptSync = require "prompt-sync"
+{ parseArgs } = require "node:util"
 
 
 basicHelp =
@@ -31,7 +32,7 @@ devHelp =
   "Special Commands":
     monday:                 "Print out a shuffled list of names"
     scan:                   "Scans a lesson for translation issues"
-    "screenshot PATH":      "Saves optimized PNGs to ~/Desktop. To dither, use --dither"
+    "screenshot PATH":      "Saves optimized PNGs to ~/Desktop. To dither, use -d or --dither"
   Flags:
     "--gulp PATH":          "Specify the gulpfile to use. Eg: cdig run --gulp dev/cd-core/gulpfile.coffee"
     "--lbs PATH":           "Specify the LBS url to use. Eg: cdig deploy --lbs http://localhost:3000"
@@ -73,7 +74,12 @@ surround = (inner, outer = " ")-> outer + inner + outer
 divider = (s = "")-> br padAround(s, 80, "─") + "\n"
 
 # console.log should have expression semantics
-log = (...args)-> console.log ...args; args[0]
+log = (...things)-> console.log ...things; things[0]
+
+# Get nicely parsed command line options
+args = (options)->
+  parsed = parseArgs { args: process.argv[3..], options, strict: false }
+  if options? then parsed else parsed.positionals
 
 # Saner default for execSync
 exec = (cmd, opts = {stdio: "inherit"})-> child_process.execSync cmd, opts
@@ -142,6 +148,7 @@ commands = {}
 
 # Tool Commands
 
+
 printHelp = (helpItems)->
   maxNameLength = 0
   for label, group of helpItems
@@ -156,7 +163,9 @@ printHelp = (helpItems)->
       log yellow "    " + name.padEnd(maxNameLength + 2) + blue description
 
 
-commands.help = (mode)->
+commands.help = ()->
+  [mode] = args()
+
   log ""
   log cyan "  The CDIG Tool • Version #{version()}"
 
@@ -170,7 +179,10 @@ commands.help = (mode)->
 
   log ""
 
-commands.update = (mode)->
+
+commands.update = ()->
+  [mode] = args()
+
   if mode is "all"
     log yellow "\nUpdating " + cyan "brew " + yellow "packages...\n"
     exec "brew update"
@@ -179,6 +191,7 @@ commands.update = (mode)->
     log yellow "\nUpdating " + cyan "npm " + yellow "packages...\n"
     exec "npm i -g npm --silent"
     exec "npm i -g coffeescript gulp-cli --silent"
+
   log yellow "\nUpdating " + cyan "cdig " + yellow "package...\n"
   exec "npm i -g cdig --silent"
 
@@ -186,13 +199,18 @@ commands.update = (mode)->
   exec "cdig version"
   log ""
 
+
 commands.version = ()->
   log version()
 
+
 # LBS Commands
 
+
 # Get/set the LBS API token for this user
-commands.auth = (token)->
+commands.auth = ()->
+  [token] = args()
+
   if token?
     keytar.setPassword "com.lunchboxsessions.cli", "api-token", token
     log green "Your API token has been saved"
@@ -202,6 +220,7 @@ commands.auth = (token)->
 
 
 # Project Commands
+
 
 era = "v4-1" # TODO — make this dynamic
 systemFiles = [".gitignore", "cdig.json", "package.json"]
@@ -222,20 +241,25 @@ pullNodeModules = ()->
     exec "npm update --silent"
 
 gulp = (mode)->
-  gulpfile = flags.gulp or "node_modules/cd-core/gulpfile.coffee"
-  cmd = "gulp --gulpfile #{gulpfile} --cwd . #{mode}"
+  { values } = args
+    gulp: { type: string, default: "node_modules/cd-core/gulpfile.coffee" }
+    locale: { type: string, short: "l" }
+
+  cmd = "gulp --gulpfile #{values.gulp} --cwd . #{mode}"
 
   # Support for locale-aware cd-module
-  locale = flags.l or flags.locale
-  cmd += " --locale " + locale if locale
+  cmd += " --locale " + values.locale if values.locale
 
   exec cmd
 
 last = (arr)-> arr[arr.length-1]
 
 projectName = ()->
+  { values } = args
+    locale: { type: string, short: "l" }
+
   name = last process.cwd().split path.sep
-  name += "@" + locale if locale = flags.l or flags.locale
+  name += "@" + values.locale if values.locale
   name
 
 indexName = ()->
@@ -264,6 +288,7 @@ commands.new = ()->
       mkdir "resources"
       pullFromOrigin type, typeFiles
 
+
 commands.pull = ()->
   return unless commandHasNeededFiles command: "watch", files: "source", hint: "new"
   log yellow "Downloading system files and dependencies..."
@@ -271,6 +296,7 @@ commands.pull = ()->
   rm file for file in systemFiles
   pullFromOrigin type, systemFiles
   pullNodeModules() # TODO: split this out into its own command, so that I can run it separately when debugging dependency stuff
+
 
 commands.clean = ()->
   return unless commandHasNeededFiles command: "clean", files: "source", msg: red "Cleaning cancelled — this doesn't look like a cdig project. Make sure you're in the correct folder."
@@ -290,16 +316,19 @@ commands.compile = ()->
   log yellow "Compiling deployable build..."
   gulp getProjectType() + ":prod"
 
+
 commands.push = ()->
   return unless commandHasNeededFiles command: "push", files: "deploy", hint: "compile"
   log yellow "Pushing to S3..."
   exec "aws s3 sync deploy/all s3://lbs-cdn/#{era}/ --size-only --exclude \".*\" --cache-control max-age=31536000,immutable"
 
+
 commands.register = ()->
   return unless commandHasNeededFiles command: "register", files: "deploy", hint: "compile"
   log yellow "Registering with LBS..."
-  domain = flags.lbs or "https://www.lunchboxsessions.com"
-  res = await post domain + "/cli/artifacts",
+  { values } = args
+    lbs: { type: string, default: "https://www.lunchboxsessions.com" }
+  res = await post values.lbs + "/cli/artifacts",
     era: era
     name: projectName()
     source: indexName()
@@ -316,11 +345,13 @@ commands.register = ()->
 commands.run = ()->
   do commands[c] for c in ["clean", "pull", "watch"]
 
+
 commands.deploy = ()->
   do commands[c] for c in ["clean", "pull", "compile", "push", "register"]
 
 
 # Dev Commands
+
 
 commands.monday = ()->
   names = ["Alex","Carl","Chris","Crystal","Emily","Ivan","Keelan","Kirstin","Lenore","Mark","Nathan","Owen","Robyn"]
@@ -329,11 +360,19 @@ commands.monday = ()->
     log yellow " • " + spliced[0]
   log ""
 
-commands.screenshot = (path)->
-  flag = if flags.dither then "" else "--nofs"
+
+commands.screenshot = ()->
+  { values, positionals } = args
+    dither: { type: "boolean", short: "d" }
+
+  flag = if values.dither then "" else "--nofs"
+  filePath = positionals[0]
+
   for i in [16, 20, 24, 32, 40, 48, 64, 80, 96, 128, 192, 256]
-    exec "pngquant #{flag} --output ~/Desktop/#{i}.png #{i} #{path}"
+    exec "pngquant #{flag} --output ~/Desktop/#{i}.png #{i} #{filePath}"
+
   null
+
 
 commands.scan = ()->
   pagesPath = "source/pages/"
@@ -404,20 +443,10 @@ commands.scan = ()->
 
 # Main ############################################################################################
 
-args = process.argv[2..]
-flags = {}
+command = process.argv[2] or "help"
 
-for arg, i in args by -1
-  if arg.startsWith "-"
-    k = arg.replace /-+/, "" # strip leading dashes
-    v = args[i+1]
-    flags[k] = v
-    args.splice i, 2
-
-command = args.shift() or "help"
-
-if c = commands[command]
-  c ...args
+if commands[command]
+  do commands[command]
 else
   log red "\n  Error: " + yellow command + red " is not a valid command."
   commands.help()
