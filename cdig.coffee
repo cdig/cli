@@ -1,9 +1,9 @@
 #!/usr/bin/env coffee
 
-child_process = require "child_process"
-fs = require "fs"
+child_process = require "node:child_process"
+fs = require "node:fs"
 keytar = require "keytar"
-path = require "path"
+path = require "node:path"
 promptSync = require "prompt-sync"
 
 
