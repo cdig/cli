@@ -224,7 +224,7 @@ commands.auth = ()->
 
 era = "v4-1" # TODO — make this dynamic
 systemFiles = [".gitignore", "cdig.json", "package.json"]
-generatedFiles = [".DS_Store", ".git", "deploy", "gulpfile.coffee", "node_modules", "package-lock.json", "public", "public-es", "yarn.lock", "yarn-error.log"]
+generatedFiles = [".DS_Store", ".git", "deploy", "gulpfile.coffee", "node_modules", "package-lock.json", "public", "public-en", "public-es", "yarn.lock", "yarn-error.log"]
 newProjectFiles =
   "cd-module": ["source/index.kit", "source/pages/objectives.html"]
   svga: ["source/root.coffee", "source/config.coffee"]
