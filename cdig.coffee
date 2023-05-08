@@ -242,8 +242,8 @@ pullNodeModules = ()->
 
 gulp = (mode)->
   { values } = args
-    gulp: { type: string, default: "node_modules/cd-core/gulpfile.coffee" }
-    locale: { type: string, short: "l" }
+    gulp: { type: "string", default: "node_modules/cd-core/gulpfile.coffee" }
+    locale: { type: "string", short: "l" }
 
   cmd = "gulp --gulpfile #{values.gulp} --cwd . #{mode}"
 
@@ -256,7 +256,7 @@ last = (arr)-> arr[arr.length-1]
 
 projectName = ()->
   { values } = args
-    locale: { type: string, short: "l" }
+    locale: { type: "string", short: "l" }
 
   name = last process.cwd().split path.sep
   name += "@" + values.locale if values.locale
@@ -327,7 +327,7 @@ commands.register = ()->
   return unless commandHasNeededFiles command: "register", files: "deploy", hint: "compile"
   log yellow "Registering with LBS..."
   { values } = args
-    lbs: { type: string, default: "https://www.lunchboxsessions.com" }
+    lbs: { type: "string", default: "https://www.lunchboxsessions.com" }
   res = await post values.lbs + "/cli/artifacts",
     era: era
     name: projectName()
