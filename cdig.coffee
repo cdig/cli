@@ -3,6 +3,7 @@
 child_process = require "node:child_process"
 fs = require "node:fs"
 keytar = require "keytar"
+os = require "os"
 path = require "node:path"
 promptSync = require "prompt-sync"
 { parseArgs } = require "node:util"
@@ -235,7 +236,7 @@ pullFromOrigin = (type, files)->
     download baseUrl + file, file
 
 pullNodeModules = ()->
-  if exists "~/cdig/cli/node_modules"
+  if exists os.homedir() + "/cdig/cli/node_modules"
     exec "cp -a ~/cdig/cli/node_modules ."
   else
     exec "npm update --silent"
