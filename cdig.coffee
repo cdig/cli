@@ -38,6 +38,7 @@ devHelp =
     "--gulp PATH":          "Specify the gulpfile to use. Eg: cdig run --gulp dev/cd-core/gulpfile.coffee"
     "--lbs PATH":           "Specify the LBS url to use. Eg: cdig deploy --lbs http://localhost:3000"
     "--locale LOCALE":      "Specify the locale to use when building a cd-module. Eg: cdig run --locale es"
+    "register -p":          "Directly open the artifact preview. Useful for bulk deploys."
 
 
 # Helpers #########################################################################################
@@ -329,6 +330,7 @@ commands.register = ()->
   log yellow "Registering with LBS..."
   { values } = args
     lbs: { type: "string", default: "https://www.lunchboxsessions.com" }
+    preview: { type: "boolean", short: "p" }
   res = await post values.lbs + "/cli/artifacts",
     era: era
     name: projectName()
@@ -336,6 +338,7 @@ commands.register = ()->
     head: indexHead()
     body: indexBody()
   text = await res.text()
+  text += "/view" if values.preview
   log yellow text
   if isUrl text
     exec "open #{text}"
