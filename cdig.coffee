@@ -374,7 +374,7 @@ commands.screenshot = ()->
   name = path.parse(filePath).name
 
   for i in [16, 20, 24, 32, 40, 48, 64, 80, 96, 128, 192, 256]
-    exec "pngquant #{flag} --output '~/Desktop/#{name} #{i}.png' #{i} #{filePath}"
+    exec "pngquant #{flag} --output ~/Desktop/#{name}\\ #{i}.png #{i} #{filePath}"
 
   null
 

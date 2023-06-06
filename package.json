@@ -1,6 +1,6 @@
 {
   "name": "cdig",
-  "version": "5.11.0",
+  "version": "5.11.1",
   "description": "A CLI tool for CDIG Inc.",
   "bin": {
     "cdig": "cdig.coffee"
