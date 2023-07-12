@@ -5,6 +5,7 @@ fs = require "node:fs"
 keytar = require "keytar"
 os = require "os"
 path = require "node:path"
+PleaseReload = require "please-reload"
 promptSync = require "prompt-sync"
 { parseArgs } = require "node:util"
 
@@ -28,6 +29,8 @@ basicHelp =
     register:               "Create an Artifact for the uploaded build\n"
     run:                    "clean + pull + watch"
     deploy:                 "clean + pull + compile + push + register"
+  "General Commands":
+    serve:                  "Spin up a live-reload server in the current directory"
 
 devHelp =
   "Special Commands":
@@ -352,6 +355,13 @@ commands.run = ()->
 
 commands.deploy = ()->
   do commands[c] for c in ["clean", "pull", "compile", "push", "register"]
+
+
+# General Commands
+
+
+commands.serve = ()->
+  PleaseReload.serve "."
 
 
 # Dev Commands

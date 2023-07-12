@@ -1,12 +1,13 @@
 {
   "name": "cdig",
-  "version": "5.11.2",
+  "version": "5.12.0",
   "description": "A CLI tool for CDIG Inc.",
   "bin": {
     "cdig": "cdig.coffee"
   },
   "dependencies": {
     "keytar": "7.9.0",
+    "please-reload": "^1.2.1",
     "prompt-sync": "4.2.0"
   },
   "license": "ISC"
