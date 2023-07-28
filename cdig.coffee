@@ -295,7 +295,7 @@ commands.new = ()->
 
 
 commands.pull = ()->
-  return unless commandHasNeededFiles command: "watch", files: "source", hint: "new"
+  return unless commandHasNeededFiles command: "pull", files: "source", hint: "new"
   log yellow "Downloading system files and dependencies..."
   type = getProjectType()
   rm file for file in systemFiles
@@ -341,9 +341,9 @@ commands.register = ()->
     head: indexHead()
     body: indexBody()
   text = await res.text()
-  text += "/view" if values.preview
-  log yellow text
   if isUrl text
+    log yellow text
+    text += "/view" if values.preview
     exec "open #{text}"
   else
     log red text
@@ -368,7 +368,7 @@ commands.serve = ()->
 
 
 commands.monday = ()->
-  names = ["Alex","Carl","Chris","Crystal","Emily","Ivan","Keelan","Kirstin","Lenore","Mark","Nathan","Owen","Robyn"]
+  names = ["Alex","Carl","Chris","Crystal","Emily","Keelan","Kirstin","Lenore","Mark","Nathan","Owen","Robyn"]
   while names.length
     spliced = names.splice Math.random() * names.length |0, 1
     log yellow " • " + spliced[0]
