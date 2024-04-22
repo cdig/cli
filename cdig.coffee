@@ -368,7 +368,7 @@ commands.serve = ()->
 
 
 commands.monday = ()->
-  names = ["Alex","Carl","Chris","Crystal","Emily","Keelan","Kirstin","Lenore","Mark","Nathan","Owen","Robyn"]
+  names = ["Alex","Brodie","Carl","Chris","Crystal","Emily","Keelan","Kirstin","Lenore","Mark","Nathan","Owen","Ricky","Robyn"]
   while names.length
     spliced = names.splice Math.random() * names.length |0, 1
     log yellow " • " + spliced[0]
