@@ -117,12 +117,13 @@ isUrl = (str)->
 prompt = (question, answers)->
   log yellow question
   for k, v of answers
-    log "Enter #{cyan k} for #{v}"
+    log "Enter #{cyan k} for #{v.label}"
   answer = promptSync(sigint:true) "Answer: "
-  if answers[answer]
-    answers[answer]
+  if answers[answer].value
+    answers[answer].value
   else
     log red "... Wasn't expecting that answer."
+
 
 # Get or prompt for the project type. This function is stateful to avoid redundant prompts.
 projectType = null
@@ -136,7 +137,16 @@ getProjectType = ()->
   else if exists "source/index.kit"
     "cd-module"
   else
-    prompt "What type of project is this?", {m: "cd-module", s: "svga"}
+    prompt "What type of project is this?",
+      m: 
+        value: "cd-module"
+        label: "cd-module"
+      s:
+        value: "svga"
+        label: "svga"
+      d:
+        value: "svga-3d"
+        label: "svga (with 3d boilerplate)"
 
 commandHasNeededFiles = ({command, files, hint, msg})->
     hasFiles = exists files
@@ -233,6 +243,7 @@ generatedFiles = [".DS_Store", ".git", "deploy", "gulpfile.coffee", "node_module
 newProjectFiles =
   "cd-module": ["source/index.kit", "source/pages/objectives.html"]
   svga: ["source/root.coffee", "source/config.coffee"]
+  "svga-3d": ["source/root.coffee", "source/config.coffee", "source/blank.svg", "source/models/cube.glb"]
 
 pullFromOrigin = (type, files)->
   baseUrl = "https://raw.githubusercontent.com/cdig/#{type}-starter/#{era}/dist/"
